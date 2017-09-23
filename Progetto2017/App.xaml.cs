@@ -23,7 +23,7 @@ namespace Progetto2017
             protected override void OnStartup(StartupEventArgs e)
             {
                 base.OnStartup(e);
-                MainWindow = new MainWindow();
+                MainWindow =  new MainWindow();
                 MainWindow.Closing += MainWindow_Closing;
 
                 _notifyIcon = new System.Windows.Forms.NotifyIcon();
