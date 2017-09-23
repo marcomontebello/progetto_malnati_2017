@@ -27,43 +27,13 @@ namespace Progetto2017
     public partial class MainWindow : Window
     {
 
-        private void AddOption_ContextMenu()
-        {
-   
-
-            // Allow the current user to read and delete the key.
-            //
+  
 
       
-            RegistryKey _key  = Registry.ClassesRoot.OpenSubKey("Folder\\Shell", true);
-            
-           // _key = Registry.ClassesRoot.OpenSubKey("Directory\\Background\\Shell", true);
-            RegistryKey newkey = _key.CreateSubKey("Condividi2 con");
-            RegistryKey subNewkey = newkey.CreateSubKey("Command");
-            subNewkey.SetValue("\"{0}\" \"%L\"", System.Reflection.Assembly.GetExecutingAssembly().Location);
-            subNewkey.Close();
-            newkey.Close();
-            _key.Close();
-
-
-            // full path to self, %L is placeholder for selected file
-          /*  string menuCommand = string.Format(
-                "\"{0}\" \"%L\"", Application.Current);
-
-            // register the context menu
-            FileShellExtension.Register("Folder",
-                Program.KeyName, Program.MenuText,
-                menuCommand);*/
-        }
-
         public MainWindow()
         {
             InitializeComponent();
-            AddOption_ContextMenu();
-        }
-
-    
-
+        }  
 
     }
 }
