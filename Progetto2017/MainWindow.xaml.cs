@@ -38,7 +38,7 @@ namespace Progetto2017
             RegistryKey _key  = Registry.ClassesRoot.OpenSubKey("Folder\\Shell", true);
             
            // _key = Registry.ClassesRoot.OpenSubKey("Directory\\Background\\Shell", true);
-            RegistryKey newkey = _key.CreateSubKey("Condividi");
+            RegistryKey newkey = _key.CreateSubKey("Condividi3 con");
             RegistryKey subNewkey = newkey.CreateSubKey("Command");
             subNewkey.SetValue("\"{0}\" \"%L\"", System.Reflection.Assembly.GetExecutingAssembly().Location);
             subNewkey.Close();
