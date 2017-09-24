@@ -32,6 +32,8 @@ namespace Progetto2017
             // create full path to registry location
             string regPath = string.Format(@"{0}\shell\{1}", fileType, shellKeyName);
 
+
+
 			// add context menu to the registry
 			using (RegistryKey key = Registry.ClassesRoot.CreateSubKey(regPath))
 			{
@@ -45,14 +47,23 @@ namespace Progetto2017
 			{				
 				key.SetValue(null, menuCommand);
 			}
-		}
 
-		/// <summary>
-		/// Unregister a simple shell context menu.
-		/// </summary>
-		/// <param name="fileType">The file type to unregister.</param>
-		/// <param name="shellKeyName">Name that was registered in the registry.</param>
-		public static void Unregister(string fileType, string shellKeyName)
+            // full path to self, %L is placeholder for selected file
+            /*  string menuCommand = string.Format(
+                  "\"{0}\" \"%L\"", Application.Current);
+
+              // register the context menu
+              FileShellExtension.Register("Folder",
+                  Program.KeyName, Program.MenuText,
+                  menuCommand);*/
+        }
+
+        /// <summary>
+        /// Unregister a simple shell context menu.
+        /// </summary>
+        /// <param name="fileType">The file type to unregister.</param>
+        /// <param name="shellKeyName">Name that was registered in the registry.</param>
+        public static void Unregister(string fileType, string shellKeyName)
 		{
 			Debug.Assert(!string.IsNullOrEmpty(fileType) &&
 				!string.IsNullOrEmpty(shellKeyName));

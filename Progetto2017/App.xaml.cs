@@ -26,23 +26,39 @@ namespace Progetto2017
                 base.OnStartup(e);
                 MainWindow =  new MainWindow();
                 MainWindow.Closing += MainWindow_Closing;
-
+                Popup popupWindow = new Popup();
                 _notifyIcon = new System.Windows.Forms.NotifyIcon();
-                _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
+                _notifyIcon.Click += (s, args) => click_on_notifyIcon(popupWindow);
+
+
+              //  _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
                 _notifyIcon.Icon = Progetto2017.Properties.Resources.MyIcon;
                 _notifyIcon.Visible = true;
 
                 CreateContextMenu();
 
+            string menuCommand = string.Format("\"{0}\" \"%L\"", Application.Current);
+
             //Creazione entry context menu per le cartelle
-            FileShellExtension.Register("Folder","LANsharing","Condividi in LAN"," ");
+            FileShellExtension.Register("Folder","LANsharing","Condividi in LAN", menuCommand);
 
             //Creazione entry context menu per i file
-            FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", " ");
+            FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", menuCommand);
 
         }
 
-            private void CreateContextMenu()
+        private void click_on_notifyIcon(Popup pw)
+        {
+            if (pw.IsVisible) {
+
+                pw.Hide();
+            }
+            else pw.Show();
+
+        }
+
+
+    private void CreateContextMenu()
             {
                 _notifyIcon.ContextMenuStrip =
                   new System.Windows.Forms.ContextMenuStrip();
@@ -90,6 +106,5 @@ namespace Progetto2017
                 }
             }
 
-
-}
+    }
 }
