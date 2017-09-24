@@ -22,6 +22,7 @@ namespace Progetto2017
 
             protected override void OnStartup(StartupEventArgs e)
             {
+            //creazione taskbar icon
                 base.OnStartup(e);
                 MainWindow =  new MainWindow();
                 MainWindow.Closing += MainWindow_Closing;
@@ -32,6 +33,10 @@ namespace Progetto2017
                 _notifyIcon.Visible = true;
 
                 CreateContextMenu();
+
+            //creazione FileShellExtension
+            FileShellExtension.Register("Folder","LANsharing","Condividi in LAN"," ");
+
             }
 
             private void CreateContextMenu()
@@ -48,9 +53,13 @@ namespace Progetto2017
                 MainWindow.Close();
                 _notifyIcon.Dispose();
                 _notifyIcon = null;
-            }
+                
+                //disattivazione menu contestuale file explorer
+                FileShellExtension.Unregister("Folder", "LANsharing");
 
-            private void ShowMainWindow()
+        }
+
+        private void ShowMainWindow()
             {
                 if (MainWindow.IsVisible)
                 {

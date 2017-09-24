@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Impostazioni Condivisione LAN" Icon="C:\Users\Marco Montebello\Documents\Visual Studio 2015\Projects\Progetto2017\Progetto2017\Resources\Myicon.ico" Height="350" Width="525">
+        Title="Impostazioni Condivisione LAN" Height="350" Width="525">
     <Viewbox Stretch="Fill">
         <ToolBarTray HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100"/>
 
