@@ -28,14 +28,15 @@ namespace Progetto2017
 				!string.IsNullOrEmpty(shellKeyName) &&
 				!string.IsNullOrEmpty(menuText) && 
 				!string.IsNullOrEmpty(menuCommand));
-			
-			// create full path to registry location
-			string regPath = string.Format(@"{0}\shell\{1}", fileType, shellKeyName);
+
+            // create full path to registry location
+            string regPath = string.Format(@"{0}\shell\{1}", fileType, shellKeyName);
 
 			// add context menu to the registry
 			using (RegistryKey key = Registry.ClassesRoot.CreateSubKey(regPath))
 			{
 				key.SetValue(null, menuText);
+                key.SetValue("Icon", "C:\\icons\\shareIcon.ico");
 			}
 			
 			// add command that is invoked to the registry

@@ -34,10 +34,13 @@ namespace Progetto2017
 
                 CreateContextMenu();
 
-            //creazione FileShellExtension
+            //Creazione entry context menu per le cartelle
             FileShellExtension.Register("Folder","LANsharing","Condividi in LAN"," ");
 
-            }
+            //Creazione entry context menu per i file
+            FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", " ");
+
+        }
 
             private void CreateContextMenu()
             {
@@ -54,7 +57,10 @@ namespace Progetto2017
                 _notifyIcon.Dispose();
                 _notifyIcon = null;
                 
-                //disattivazione menu contestuale file explorer
+                //disattivazione menu contestuale folder file explorer
+                FileShellExtension.Unregister("Folder", "LANsharing");
+
+                //disattivazione menu contestuale per i file
                 FileShellExtension.Unregister("Folder", "LANsharing");
 
         }
