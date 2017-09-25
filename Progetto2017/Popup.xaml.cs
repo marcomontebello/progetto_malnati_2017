@@ -20,16 +20,21 @@ namespace Progetto2017
     public partial class Popup : Window
     {
         public Popup()
+
         {
             InitializeComponent();
-            Left = System.Windows.SystemParameters.WorkArea.Width - Width;
+            Left = System.Windows.SystemParameters.WorkArea.Width - Width - 70;
             Top = System.Windows.SystemParameters.WorkArea.Height - Height;
 
         }
 
-        private void exit_click(object sender, RoutedEventArgs e)
+        private void button_Click(object sender, RoutedEventArgs e)
         {
-            App.Current.Shutdown(); 
+
+        }
+
+        private void button1_Click(object sender, RoutedEventArgs e)
+        {
 
         }
     }

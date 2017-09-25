@@ -17,25 +17,23 @@ namespace Progetto2017
     public partial class App : Application
     {
 
-            private System.Windows.Forms.NotifyIcon _notifyIcon;
-            private bool _isExit;
+          private System.Windows.Forms.NotifyIcon _notifyIcon;
+          private bool _isExit;
 
-            protected override void OnStartup(StartupEventArgs e)
+          protected override void OnStartup(StartupEventArgs e)
             {
             //creazione taskbar icon
                 base.OnStartup(e);
                 MainWindow =  new MainWindow();
                 MainWindow.Closing += MainWindow_Closing;
-                Popup popupWindow = new Popup();
-                _notifyIcon = new System.Windows.Forms.NotifyIcon();
-                _notifyIcon.Click += (s, args) => click_on_notifyIcon(popupWindow);
+                Popup _popupWindow = new Popup();
 
+            _notifyIcon = new System.Windows.Forms.NotifyIcon();
+            _notifyIcon.Click += (s, args) => click_on_notifyIcon(_popupWindow);
+            _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
+            _notifyIcon.Icon = Progetto2017.Properties.Resources.MyIcon;
+            _notifyIcon.Visible = true;
 
-              //  _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
-                _notifyIcon.Icon = Progetto2017.Properties.Resources.MyIcon;
-                _notifyIcon.Visible = true;
-
-                CreateContextMenu();
 
             string menuCommand = string.Format("\"{0}\" \"%L\"", Application.Current);
 
@@ -44,6 +42,8 @@ namespace Progetto2017
 
             //Creazione entry context menu per i file
             FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", menuCommand);
+            _popupWindow.button.Click += (s, args) => ExitApplication(_popupWindow);
+            _popupWindow.textBlock.MouseLeftButtonDown += (s, args) => ShowMainWindow();
 
         }
 
@@ -58,18 +58,11 @@ namespace Progetto2017
         }
 
 
-    private void CreateContextMenu()
-            {
-                _notifyIcon.ContextMenuStrip =
-                  new System.Windows.Forms.ContextMenuStrip();
-                _notifyIcon.ContextMenuStrip.Items.Add("MainWindow...").Click += (s, e) => ShowMainWindow();
-                _notifyIcon.ContextMenuStrip.Items.Add("Exit").Click += (s, e) => ExitApplication();
-            }
-
-            private void ExitApplication()
+            private void ExitApplication(Popup pw)
             {
                 _isExit = true;
-                MainWindow.Close();
+                pw.Close();
+                //MainWindow.Close();
                 _notifyIcon.Dispose();
                 _notifyIcon = null;
                 
@@ -77,7 +70,8 @@ namespace Progetto2017
                 FileShellExtension.Unregister("Folder", "LANsharing");
 
                 //disattivazione menu contestuale per i file
-                FileShellExtension.Unregister("Folder", "LANsharing");
+                FileShellExtension.Unregister("*", "LANsharing");
+                App.Current.Shutdown();
 
         }
 

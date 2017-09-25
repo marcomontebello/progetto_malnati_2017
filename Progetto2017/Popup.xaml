@@ -5,9 +5,47 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Popup" ResizeMode="NoResize" Height="161.399" Width="257.143" WindowStartupLocation="Manual" Top="100" Left="0" WindowStyle="None" Background="#FF391D6A">
-    <Grid d:IsLocked="True">
-        <Button x:Name="button" Content="Exit" Click="exit_click" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="210" Height="120" />
-        <Button x:Name="button1" Content="Button" HorizontalAlignment="Left" VerticalAlignment="Top" Width="75"/>
+        Title="Popup" ResizeMode="NoResize" Height="123.801" Width="226.189" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="0.8" OpacityMask="Black" Background="#FF212121" AllowsTransparency="True" WindowStyle="None">
+    <Window.Effect>
+        <DropShadowEffect/>
+    </Window.Effect>
+    <Grid d:IsLocked="false" Margin="0,28,39,-3">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="4*"/>
+            <ColumnDefinition Width="185*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0*"/>
+            <ColumnDefinition Width="0"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="button" Content="" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="28" Height="28" Margin="0,0,-32,18" BorderThickness="0" RenderTransformOrigin="0.5,0.5" Click="button_Click" Grid.Column="5" IsDefault="True" AutomationProperties.HelpText="Exit service" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleY="1.244"/>
+                    <RotateTransform/>
+                    <TranslateTransform Y="0.434"/>
+                </TransformGroup>
+            </Button.RenderTransform>
+            <Button.Background>
+                <ImageBrush ImageSource="Resources/icons8-Uscita-96.png"/>
+            </Button.Background>
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <Button x:Name="button1"  HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
+            <Button.Effect>
+                <DropShadowEffect/>
+            </Button.Effect>
+        </Button>
+        <TextBlock x:Name="textBlock" HorizontalAlignment="Right" TextWrapping="Wrap" VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5">
+            <TextBlock.Effect>
+                <DropShadowEffect/>
+            </TextBlock.Effect>
+            <TextBlock.Background>
+                <ImageBrush ImageSource="Resources/icons8-Impostazioni-96.png" Stretch="Uniform"/>
+            </TextBlock.Background>
+        </TextBlock>
     </Grid>
 </Window>
