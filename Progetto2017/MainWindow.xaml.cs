@@ -107,10 +107,8 @@ namespace Progetto2017
 
             try
             {
-                System.Console.WriteLine(Settings1.Default.userImage + "ciaooone");
 
                 new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
-                //new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
 
             }
             catch (Exception ex)
