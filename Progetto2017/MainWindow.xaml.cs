@@ -1,5 +1,4 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.AccessControl;
@@ -15,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 //using FileShellExtension;
 
@@ -55,7 +55,7 @@ namespace Progetto2017
 
 
 
-            if (ofdPicture.ShowDialog() == true)
+            if (ofdPicture.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ImageBrush new_source = new ImageBrush();
                 new_source.ImageSource = new BitmapImage(new Uri(ofdPicture.FileName));
@@ -77,6 +77,14 @@ namespace Progetto2017
 
         }
 
+        private void open_directory_path(object sender, RoutedEventArgs e)
+        {
+            FolderBrowserDialog fdb = new FolderBrowserDialog();
+            if (fdb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                textBox.Text = fdb.SelectedPath;
+            }
+        }
         private void ignore_button_Click(object sender, RoutedEventArgs e)
         {
             boxName.Text = Settings1.Default.userName;
