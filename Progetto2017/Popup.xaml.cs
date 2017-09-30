@@ -36,6 +36,12 @@ namespace Progetto2017
         private void button1_Click(object sender, RoutedEventArgs e)
         {
 
+            if (button1.Content.Equals("Stato: \nOnline"))
+            {
+                button1.Content = "Stato: \nOffline";
+            }
+            else
+                button1.Content = "Stato: \nOnline";
         }
     }
 }

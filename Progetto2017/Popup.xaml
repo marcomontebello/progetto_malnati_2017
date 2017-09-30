@@ -34,7 +34,7 @@
                 <DropShadowEffect/>
             </Button.Effect>
         </Button>
-        <Button x:Name="button1"  HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
+        <Button x:Name="button1"  HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: &#xa;Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
             <Button.Effect>
                 <DropShadowEffect/>
             </Button.Effect>

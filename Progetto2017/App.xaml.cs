@@ -58,7 +58,8 @@ namespace Progetto2017
         }
 
 
-            private void ExitApplication(Popup pw)
+       private void ExitApplication(Popup pw)
+
             {
                 _isExit = true;
                 pw.Close();

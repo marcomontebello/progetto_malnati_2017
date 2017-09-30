@@ -6,8 +6,19 @@
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
         Title="Impostazioni Condivisione LAN" Icon="C:\icons\shareIcon.ico" Height="350" Width="525">
-    <Viewbox Stretch="Fill">
-        <ToolBarTray HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="100"/>
-
-    </Viewbox>
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Label>Name:</Label>
+        <TextBox Grid.Column="1" Margin="0,0,0,10" />
+        <Label Grid.Row="1">Percorso Default:</Label>
+        <TextBox Grid.Row="1" Grid.Column="1" Margin="0,0,0,10" />
+    </Grid>
 </Window>
