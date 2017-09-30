@@ -22,5 +22,65 @@ namespace Progetto2017 {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool automaticAccept {
+            get {
+                return ((bool)(this["automaticAccept"]));
+            }
+            set {
+                this["automaticAccept"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool useDefaultPath {
+            get {
+                return ((bool)(this["useDefaultPath"]));
+            }
+            set {
+                this["useDefaultPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string defaultPath {
+            get {
+                return ((string)(this["defaultPath"]));
+            }
+            set {
+                this["defaultPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string userName {
+            get {
+                return ((string)(this["userName"]));
+            }
+            set {
+                this["userName"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("c:\\icons\\user_profile_male.jpg")]
+        public string userImage {
+            get {
+                return ((string)(this["userImage"]));
+            }
+            set {
+                this["userImage"] = value;
+            }
+        }
     }
 }
