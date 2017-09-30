@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Impostazioni Condivisione LAN" Icon="C:\icons\shareIcon.ico" Height="350" Width="525" ShowInTaskbar="False" AllowsTransparency="True" WindowStyle="None" Background="#FF3A3535" Opacity="0.9">
-    <Grid Margin="30,30,9,0" Height="85" VerticalAlignment="Top">
+        Title="Impostazioni Condivisione LAN" Icon="C:\icons\shareIcon.ico" Height="377" Width="544" ShowInTaskbar="False" Opacity="0.99" WindowStyle="ThreeDBorderWindow" Background="{DynamicResource {x:Static SystemColors.AppWorkspaceBrushKey}}">
+    <Grid Margin="30,30,9,0" Height="97" VerticalAlignment="Top">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="70*" />
@@ -16,15 +16,17 @@
             <RowDefinition Height="0.1*" />
         </Grid.RowDefinitions>
 
-        <Label  Grid.Column="1" Margin="10,0,1,43" VerticalAlignment="Bottom" Foreground="#FFEED7D7">Name:</Label>
-        <TextBox Name="boxName" Grid.Column="1" Margin="15,0,0,14" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="166" TextChanged="TextBox_TextChanged" Background="#FF807A7A" />
-        <Ellipse Name="imageShape" MouseDown="btnBrowse_Click" Grid.Column="0" HorizontalAlignment="Center" Width="85" Margin="26,-2,19,2" >
+        <Label  Grid.Column="1" Margin="28,0,10,43" VerticalAlignment="Bottom">Name:</Label>
+        <TextBox Name="boxName" Grid.Column="1" Margin="28,0,0,20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="166" TextChanged="TextBox_TextChanged" />
+        <Ellipse Name="imageShape" MouseDown="btnBrowse_Click" Grid.Column="0" HorizontalAlignment="Center" Width="100" Margin="10,0,17,2" >
             <Ellipse.Fill >
                 <ImageBrush/>
             </Ellipse.Fill>
         </Ellipse>
         <Button x:Name="ok_button" Click="ok_button_Click" Content="OK" Grid.Column="1" HorizontalAlignment="Left" Height="33" Margin="288,267,0,-220" VerticalAlignment="Top" Width="71"/>
         <Button x:Name="ignore_button" Click="ignore_button_Click" Content="Annulla" Grid.Column="1" HorizontalAlignment="Left" Height="33" Margin="196,267,0,-220" VerticalAlignment="Top" Width="71"/>
+        <Button x:Name="reset_button" Click="reset_button_Click" Content="Reset configurazione" HorizontalAlignment="Left" Height="33" Margin="5,267,0,-203" VerticalAlignment="Top" Width="120"/>
+
         <Grid HorizontalAlignment="Left" Height="130" Margin="5,100,0,-145" VerticalAlignment="Top" Width="480" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="3*" />
@@ -39,8 +41,8 @@
             <CheckBox x:Name="checkBox2" Grid.Row="1"  FlowDirection="RightToLeft" Height="28" VerticalAlignment="Top" Margin="0,6,250,0" >
                 <TextBlock FlowDirection="LeftToRight" Text="Utilizza percorso di default " Width="200" />
             </CheckBox>
-            <Button x:Name="button_directory_path" Content="Percorso Directory" Click="open_directory_path" Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="0,0,350,13" HorizontalAlignment="Right" Width="120" Height="20" VerticalAlignment="Bottom" />
-            <TextBox x:Name="textBox" TextWrapping="Wrap" Text=""  Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="150,10,20,13" />
+            <Button x:Name="button_directory_path" Content="Percorso Directory" Click="open_directory_path" Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="0,0,360,0" HorizontalAlignment="Right" Width="120" Height="33" VerticalAlignment="Bottom" />
+            <TextBox x:Name="textBox" TextWrapping="Wrap" Text=""  Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="150,10,20,10" />
 
 
         </Grid>

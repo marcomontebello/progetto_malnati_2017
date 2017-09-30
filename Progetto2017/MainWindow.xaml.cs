@@ -34,10 +34,7 @@ namespace Progetto2017
         public MainWindow()
         {
             InitializeComponent();
-            boxName.Text=Settings1.Default.userName;
-            ImageBrush new_source = new ImageBrush();
-            new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
-            imageShape.Fill = new_source;
+            load_settings(); 
 
         }
 
@@ -53,8 +50,6 @@ namespace Progetto2017
                 "Image files|*.bmp;*.jpg;*.gif;*.png;*.tif";
             ofdPicture.FilterIndex = 1;
 
-
-
             if (ofdPicture.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
                 ImageBrush new_source = new ImageBrush();
@@ -67,8 +62,11 @@ namespace Progetto2017
         private void ok_button_Click(object sender, RoutedEventArgs e)
         {
 
-            Settings1.Default.userName = userName;
-            Settings1.Default.userImage = userImage;
+            Settings1.Default.userName = this.userName;
+            Settings1.Default.userImage = this.userImage;
+            Settings1.Default.automaticAccept = (bool)checkBox.IsChecked;
+            Settings1.Default.useDefaultPath = (bool)checkBox2.IsChecked;
+            Settings1.Default.defaultPath = textBox.Text;
 
             Settings1.Default.Save();
 
@@ -85,14 +83,49 @@ namespace Progetto2017
                 textBox.Text = fdb.SelectedPath;
             }
         }
+
         private void ignore_button_Click(object sender, RoutedEventArgs e)
         {
-            boxName.Text = Settings1.Default.userName;
-            ImageBrush new_source = new ImageBrush();
-            new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
-            imageShape.Fill = new_source;
 
+            load_settings();
             this.Close();
         }
+
+        private void reset_button_Click(object sender, RoutedEventArgs e)
+        {
+
+            Settings1.Default.Reset();
+            load_settings();
+
+
+        }
+
+        private void load_settings() {
+
+            boxName.Text = Settings1.Default.userName;
+            ImageBrush new_source = new ImageBrush();
+
+            try
+            {
+                System.Console.WriteLine(Settings1.Default.userImage + "ciaooone");
+
+                new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
+                //new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
+
+            }
+            catch (Exception ex)
+            {
+                ex.ToString();
+                new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
+            }
+
+            imageShape.Fill = new_source;
+            checkBox.IsChecked = Settings1.Default.automaticAccept;
+            checkBox2.IsChecked = Settings1.Default.useDefaultPath;
+            textBox.Text = Settings1.Default.defaultPath;
+
+        }
+
+
     }
 }

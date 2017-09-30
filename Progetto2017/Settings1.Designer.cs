@@ -49,7 +49,7 @@ namespace Progetto2017 {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:/")]
         public string defaultPath {
             get {
                 return ((string)(this["defaultPath"]));
@@ -73,7 +73,7 @@ namespace Progetto2017 {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("c:\\icons\\user_profile_male.jpg")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string userImage {
             get {
                 return ((string)(this["userImage"]));
