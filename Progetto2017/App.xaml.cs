@@ -35,7 +35,7 @@ namespace Progetto2017
             _notifyIcon.Visible = true;
 
 
-            string menuCommand = string.Format("\"{0}\" \"%L\"", Application.Current);
+            string menuCommand = string.Format("\"{0}\" \"%L\"", "C:\\Users\\Marco Montebello\\Documents\\Visual Studio 2015\\Projects\\Progetto2017\\FileSharing\\bin\\Debug\\FileSharing.exe");
 
             //Creazione entry context menu per le cartelle
             FileShellExtension.Register("Folder","LANsharing","Condividi in LAN", menuCommand);
