@@ -15,7 +15,14 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using System.Windows.Forms;
-
+using System.Windows.Threading;
+using System.Threading;
+using System.Net.Sockets;
+using System.Net;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
+using shareLANsupportLib;
 //using FileShellExtension;
 
 namespace Progetto2017
@@ -26,22 +33,55 @@ namespace Progetto2017
     /// prova
     public partial class MainWindow : Window
     {
-
+        //parte nuova
         private string userName = null;
+
         private string userImage = null;
 
-      
+        private readonly Dispatcher _uiDispatcher;
+
         public MainWindow()
         {
             InitializeComponent();
-            load_settings(); 
-
+            //inizializzazione variabili all'avvio della main Window
+            userName = Environment.UserName;
+            shareLANsupportLib.UserProfile imageObject = new shareLANsupportLib.UserProfile();
+            userImage = imageObject.UserImagePath;
+            System.Console.WriteLine(userImage);
+            load_settings();
+            //nuovo codice
+            _uiDispatcher = Dispatcher.CurrentDispatcher;
+            Task.Factory.StartNew(UDP_sender);
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        public void UDP_sender()
         {
-            this.userName = boxName.Text;
+            var Client = new UdpClient();
+            for (int i = 0; i < 10; i++)
+            {
+
+
+                Message.Class1 dp = new Message.Class1 { name = this.userName, image = new Bitmap(@"C:\Users\GRAZIANO\Desktop\crash-bandicoot-sony-pubblica-un-immagine-twitter-v2-258919-1280x720.jpg", true) };
+
+                byte[] bytes = null;
+
+                using (var ms = new MemoryStream())
+                {
+                    var bf = new BinaryFormatter();
+                    bf.Serialize(ms, dp);
+                    bytes = ms.ToArray();
+                }
+
+                System.Console.WriteLine("n byte inviati {0}", bytes.Length);
+                Client.EnableBroadcast = true;
+                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8888));
+
+                Thread.Sleep(2000);
+            }
+            Client.Close();
         }
+
+     
 
         private void btnBrowse_Click(object sender, RoutedEventArgs e)
         {
@@ -62,8 +102,6 @@ namespace Progetto2017
         private void ok_button_Click(object sender, RoutedEventArgs e)
         {
 
-            Settings1.Default.userName = this.userName;
-            Settings1.Default.userImage = this.userImage;
             Settings1.Default.automaticAccept = (bool)checkBox.IsChecked;
             Settings1.Default.useDefaultPath = (bool)checkBox2.IsChecked;
             Settings1.Default.defaultPath = textBox.Text;
@@ -100,15 +138,17 @@ namespace Progetto2017
 
         }
 
-        private void load_settings() {
-
-            boxName.Text = Settings1.Default.userName;
+        private void load_settings()
+        {
+            //parte cambiata
+            label.Content = this.userName;
             ImageBrush new_source = new ImageBrush();
 
             try
             {
 
-                new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
+                // new_source.ImageSource = new BitmapImage(new Uri(Settings1.Default.userImage));
+                new_source.ImageSource = new BitmapImage(new Uri(userImage));
 
             }
             catch (Exception ex)

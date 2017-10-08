@@ -11,11 +11,5 @@
     <Setting Name="defaultPath" Type="System.String" Scope="User">
       <Value Profile="(Default)">C:/</Value>
     </Setting>
-    <Setting Name="userName" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
-    <Setting Name="userImage" Type="System.String" Scope="User">
-      <Value Profile="(Default)" />
-    </Setting>
   </Settings>
 </SettingsFile>

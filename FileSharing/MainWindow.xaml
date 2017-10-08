@@ -9,7 +9,7 @@
     <Grid Margin="28,34,28,37">
         <Grid Margin="10,50,10,29"/>
         <Label x:Name="label1" Grid.Row="0" Grid.Column="0" Content="" Margin="10,129,10,10"/>
-        <Ellipse Name="imageShape1" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Width="111" Margin="5,5,5,50" >
+        <Ellipse Name="imageShape1" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Width="101" Margin="10,5,10,69" >
             <Ellipse.Fill >
                 <ImageBrush/>
             </Ellipse.Fill>

@@ -58,29 +58,5 @@ namespace Progetto2017 {
                 this["defaultPath"] = value;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string userName {
-            get {
-                return ((string)(this["userName"]));
-            }
-            set {
-                this["userName"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string userImage {
-            get {
-                return ((string)(this["userImage"]));
-            }
-            set {
-                this["userImage"] = value;
-            }
-        }
     }
 }

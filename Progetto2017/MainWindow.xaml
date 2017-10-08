@@ -17,7 +17,6 @@
         </Grid.RowDefinitions>
 
         <Label  Grid.Column="1" Margin="28,0,10,47" VerticalAlignment="Bottom" Height="26">Name:</Label>
-        <TextBox Name="boxName" Grid.Column="1" Margin="28,0,0,20" VerticalAlignment="Bottom" HorizontalAlignment="Left" Width="313" TextChanged="TextBox_TextChanged" Height="22" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" />
         <Ellipse Name="imageShape" MouseDown="btnBrowse_Click" Grid.Column="0" HorizontalAlignment="Right" Width="110" Margin="0,2,18,0" >
             <Ellipse.Fill >
                 <ImageBrush/>
@@ -46,5 +45,6 @@
 
 
         </Grid>
+        <Label x:Name="label" Content="" Grid.Column="1" HorizontalAlignment="Left" Margin="28,71,0,0" VerticalAlignment="Top" Width="312"/>
     </Grid>
 </Window>
