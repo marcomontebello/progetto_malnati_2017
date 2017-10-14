@@ -5,15 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSharing"
         mc:Ignorable="d"
-        Title="Condividi con:" Height="451" Width="669">
-    <Grid Margin="28,34,28,37">
-        <Grid Margin="10,50,10,29"/>
-        <Label x:Name="label1" Grid.Row="0" Grid.Column="0" Content="" Margin="10,129,10,10"/>
-        <Ellipse Name="imageShape1" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Center" Width="101" Margin="10,5,10,69" >
-            <Ellipse.Fill >
-                <ImageBrush/>
-            </Ellipse.Fill>
-        </Ellipse>
+        Height="451" Width="669">
+    <Grid x:Name="root_grid" Margin="28,34,28,37">
+
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
             <RowDefinition Height="2*" />
@@ -27,5 +21,10 @@
 
 
         </Grid.ColumnDefinitions>
+        <DockPanel HorizontalAlignment="Left" Height="115" LastChildFill="True" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <Label Name="label0" DockPanel.Dock="Bottom"></Label>
+            <Ellipse Name="ellipse0" DockPanel.Dock="Top" Stretch="Uniform" Margin="5,5,5,5"></Ellipse>
+        </DockPanel>
     </Grid>
+
 </Window>

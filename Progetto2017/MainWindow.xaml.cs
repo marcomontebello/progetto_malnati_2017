@@ -22,7 +22,6 @@ using System.Net;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Drawing;
-using shareLANsupportLib;
 //using FileShellExtension;
 
 namespace Progetto2017
@@ -45,9 +44,8 @@ namespace Progetto2017
             InitializeComponent();
             //inizializzazione variabili all'avvio della main Window
             userName = Environment.UserName;
-            shareLANsupportLib.UserProfile imageObject = new shareLANsupportLib.UserProfile();
-            userImage = imageObject.UserImagePath;
-            System.Console.WriteLine(userImage);
+            userImage = null;
+            //System.Console.WriteLine(userImage);
             load_settings();
             //nuovo codice
             _uiDispatcher = Dispatcher.CurrentDispatcher;
@@ -57,11 +55,11 @@ namespace Progetto2017
         public void UDP_sender()
         {
             var Client = new UdpClient();
-            for (int i = 0; i < 10; i++)
+            while (true)
             {
 
 
-                Message.Class1 dp = new Message.Class1 { name = this.userName, image = new Bitmap(@"C:\Users\GRAZIANO\Desktop\crash-bandicoot-sony-pubblica-un-immagine-twitter-v2-258919-1280x720.jpg", true) };
+                Message.Udp_message dp = new Message.Udp_message{ name = this.userName, image = new Bitmap(40,40) };
 
                 byte[] bytes = null;
 
