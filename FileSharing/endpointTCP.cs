@@ -54,6 +54,7 @@ namespace FileSharing
                 Array.Copy(Encoding.ASCII.GetBytes(headerStr), header, Encoding.ASCII.GetBytes(headerStr).Length);
 
                 tcpClient.Client.Send(header);
+                UserControl1 uc = (UserControl1)App.Current.MainWindow.FindName("progress");
 
                 for (int i = 0; i < bufferCount; i++)
                 {
@@ -61,7 +62,16 @@ namespace FileSharing
                     int size = fs.Read(buffer, 0, bufferSize);
 
                     tcpClient.Client.Send(buffer, size, SocketFlags.Partial);
-
+                    //////////////////////////////////////////////////////////////////////
+                    if (App.Current.CheckAccess())
+                       uc.Value = (i*bufferSize);
+                    else
+                    {
+                        App.Current.Dispatcher.Invoke(() => {
+                            uc.Value = (i * bufferSize);
+                        });
+                        ////////////////////////////////////////////////////////////////////////
+                    }
                 }
 
                 tcpClient.Client.Close();

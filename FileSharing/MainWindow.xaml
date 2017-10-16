@@ -3,10 +3,10 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:FileSharing"
+        xmlns:local="clr-namespace:FileSharing"       
         mc:Ignorable="d"
-        Height="451" Width="669">
-    <Grid x:Name="root_grid" Margin="28,34,28,37">
+        Height="448" Width="667">
+    <Grid x:Name="root_grid" Margin="28,51,28,56">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="2*" />
@@ -21,10 +21,72 @@
 
 
         </Grid.ColumnDefinitions>
-        <DockPanel HorizontalAlignment="Left" Height="115" LastChildFill="True" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
-            <Label Name="label0" DockPanel.Dock="Bottom"></Label>
-            <Ellipse Name="ellipse0" DockPanel.Dock="Top" Stretch="Uniform" Margin="5,5,5,5"></Ellipse>
-        </DockPanel>
-    </Grid>
+        <CheckBox Name="checkbox0" Selector.IsSelected="True" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse0"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label0" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center" />
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox1" Selector.IsSelected="True" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse1"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label1" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox2" Selector.IsSelected="True" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Checked="checkbox2_Checked">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse2"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label2" VerticalAlignment="Center" Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox3" Selector.IsSelected="True" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse3"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label3" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox4" Selector.IsSelected="True" Grid.Column="4" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse4"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label4" VerticalAlignment="Center" Content="prova" HorizontalAlignment="Center" />
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox5" Selector.IsSelected="True" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse5"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label5" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox6" Selector.IsSelected="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse6"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label6" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox7" Selector.IsSelected="True" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse7"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label7" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <CheckBox Name="checkbox8" Selector.IsSelected="True" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse8"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label8" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
 
+        <CheckBox Name="checkbox9" Selector.IsSelected="True" Grid.Column="4" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100">
+            <StackPanel Orientation="Vertical">
+                <Ellipse Name="ellipse9"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
+                <Label Name="label9" VerticalAlignment="Bottom"   Content="prova" HorizontalAlignment="Center"/>
+            </StackPanel>
+        </CheckBox>
+        <Button x:Name="button_invia" Content="Invia" Grid.Column="4" Margin="26,168,10,-36" Grid.Row="1" Click="button_Click"/>
+        <Button x:Name="button_annulla" Content="Annulla" Grid.Column="3" Margin="11,168,24,-36" Grid.Row="1" Click="button_Click"/>
+        <Label x:Name="label" Content="Scegli con chi condividere:" HorizontalAlignment="Left" Margin="-3,-45,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="235" FontFamily="Nirmala UI Semilight" FontSize="18"/>
+
+
+
+    </Grid>
 </Window>

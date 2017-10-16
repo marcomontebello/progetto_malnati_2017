@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,10 +48,44 @@ namespace FileSharing
         {
             InitializeComponent();
             _uiDispatcher = Dispatcher.CurrentDispatcher;
-           // Task.Factory.StartNew(UDP_listening_PI1);
+            // Task.Factory.StartNew(UDP_listening_PI1);
 
+
+
+
+            ///////////////prova update immagini manwindow
+            for (int i = 0; i < 10; i++)
+            {
+                Label label = (Label)this.FindName("label" + i);
+                //label1.Content = packet.name;
+                label.Content = "prova" + i;
+
+                ImageBrush new_source = new ImageBrush();
+
+
+                new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
+
+
+                Ellipse ellipse = (Ellipse)this.FindName("ellipse" + i);
+
+                ellipse.Fill = new_source;
+                ellipse.Fill.Opacity = 100;
+
+
+
+
+            }
+            /////prova invio file
+
+        }
+
+
+        private void send_file(/*object o*/)
+        {
             try
             {
+
+                //Ellipse ell=(Ellipse)o;
 
                 //string to_send = args[1];
                 string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
@@ -57,12 +93,19 @@ namespace FileSharing
 
                 if (attr.HasFlag(FileAttributes.Directory))
                 {
-                    label0.Content="è una directory";
+                    //label0.Content = ell.Name;
                     //to_send = to_send.Split('\\').Last();
-                    
+
                     //temp_path = System.IO.Path.GetTempPath()+"\\"+ send_path.Split('\\').Last() + ".zip";
                     ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\prova.zip");
                     send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.zip";
+                    DirectoryInfo dInfo = new DirectoryInfo(send_path);
+
+                    DirectorySecurity dSecurity = dInfo.GetAccessControl();
+                    dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl,
+                                                 InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
+                                                 PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                    dInfo.SetAccessControl(dSecurity);
 
 
                     Console.WriteLine("Ho creato il file zip:" + send_path);
@@ -73,21 +116,21 @@ namespace FileSharing
 
                 string filename = send_path.Split('\\').Last();
 
-                System.Console.WriteLine ("path:"+send_path);
-                System.Console.WriteLine("filename:"+filename);
+                System.Console.WriteLine("path:" + send_path);
+                System.Console.WriteLine("filename:" + filename);
 
                 senderTCP invio_file = new senderTCP(ip_graziano, send_path, filename);
-        
+
                 Task.Factory.StartNew(invio_file.sendFile);
             }
-            catch(Exception e) {
+            catch (Exception e)
+            {
 
                 System.Console.WriteLine(e.StackTrace);
             }
 
         }
-
-
+    
 
         public void UDP_listening_PI1()
         {
@@ -204,8 +247,64 @@ namespace FileSharing
 
             }));
         }
-    
+
+        private void button_Click(object sender, RoutedEventArgs e)
+        {
+
+            for (int i = 0; i < 10; i++) {
+
+                CheckBox check = (CheckBox)this.FindName("checkbox" + i);
+                if (check.IsChecked == true)
+                {
+                    Label label = (Label)this.FindName("label" + i);
+                    label.Content = "isCheked";
+                }
+
+
+            }
+
+            HideAllControl();
+            UserControl1 uc = new UserControl1();
+            uc.Name = "progress";
+            uc.Visibility = Visibility.Visible;
+            StackPanel stack = new StackPanel { Orientation = Orientation.Horizontal };
+            stack.VerticalAlignment = VerticalAlignment.Center;
+            stack.HorizontalAlignment = HorizontalAlignment.Center;
+            stack.Children.Add(uc);
+            this.Content = stack;
+            send_file();
+
         }
+
+
+
+
+        private void HideAllControl()
+        {
+            /// casting the content into panel
+            Panel mainContainer = (Panel)this.Content;
+
+            /// GetAll UIElement
+            UIElementCollection element = mainContainer.Children;
+
+            /// casting the UIElementCollection into List
+            List<FrameworkElement> lstElement = element.Cast<FrameworkElement>().ToList();
+
+            /// Geting all Control from list
+            var lstControl = lstElement.OfType<Control>();
+
+            foreach (Control contol in lstControl)
+            {
+                ///Hide all Controls
+                contol.Visibility = System.Windows.Visibility.Hidden;
+            }
+        }
+
+        private void checkbox2_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+    }
     }
 
 
