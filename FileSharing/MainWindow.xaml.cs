@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
 using System.Security.Principal;
@@ -21,6 +22,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+
+using System.Drawing;
+
 
 namespace FileSharing
 {
@@ -42,17 +46,17 @@ namespace FileSharing
         string temp_path = null;
 
         //diventerà lista quando gestiremo utenti multipli
-        private List<string> onlineUsers=new List<string>();
+        //lista di indirizzi ip identificativi degli utenti
+        private List<User> onlineUsers=new List<User>();
+        private bool listen=true;
 
         public MainWindow()
         {
             InitializeComponent();
             _uiDispatcher = Dispatcher.CurrentDispatcher;
-            // Task.Factory.StartNew(UDP_listening_PI1);
+            Task.Factory.StartNew(UDP_listening_PI1);
 
-
-
-
+/*
             ///////////////prova update immagini manwindow
             for (int i = 0; i < 10; i++)
             {
@@ -63,6 +67,8 @@ namespace FileSharing
                 ImageBrush new_source = new ImageBrush();
 
 
+
+
                 new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
 
 
@@ -71,34 +77,30 @@ namespace FileSharing
                 ellipse.Fill = new_source;
                 ellipse.Fill.Opacity = 100;
 
-
-
-
             }
             /////prova invio file
-
+            */
         }
 
 
-        private void send_file(/*object o*/)
+      private void send_file()
         {
             try
             {
 
-                //Ellipse ell=(Ellipse)o;
-
                 //string to_send = args[1];
                 string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
                 FileAttributes attr = File.GetAttributes(send_path);
+                // bool is_dir=false;
 
                 if (attr.HasFlag(FileAttributes.Directory))
                 {
                     //label0.Content = ell.Name;
                     //to_send = to_send.Split('\\').Last();
-
+                    //is_dir = true;
                     //temp_path = System.IO.Path.GetTempPath()+"\\"+ send_path.Split('\\').Last() + ".zip";
-                    ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\prova.zip");
-                    send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.zip";
+                    ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR");
+                    send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR";
                     DirectoryInfo dInfo = new DirectoryInfo(send_path);
 
                     DirectorySecurity dSecurity = dInfo.GetAccessControl();
@@ -109,7 +111,7 @@ namespace FileSharing
 
 
                     Console.WriteLine("Ho creato il file zip:" + send_path);
-                    ZipFile.ExtractToDirectory("C:\\Users\\Marco Montebello\\Desktop\\prova.zip", "C:\\Users\\Marco Montebello\\Desktop\\CAZZO");
+                    // ZipFile.ExtractToDirectory("C:\\Users\\Marco Montebello\\Desktop\\prova.zip", "C:\\Users\\Marco Montebello\\Desktop\\CAZZO");
 
 
                 }
@@ -119,9 +121,25 @@ namespace FileSharing
                 System.Console.WriteLine("path:" + send_path);
                 System.Console.WriteLine("filename:" + filename);
 
-                senderTCP invio_file = new senderTCP(ip_graziano, send_path, filename);
+                // senderTCP invio_file = new senderTCP(ip_graziano, send_path, filename);
 
-                Task.Factory.StartNew(invio_file.sendFile);
+
+
+                // Task sendTask = Task.Factory.StartNew(invio_file.sendFile);
+                // sendTask.Wait();
+                foreach (User sel in onlineUsers)
+                {
+
+                    if (sel.isSelected == true)
+                    {
+                        UserControl uc = new UserControl(sel.Address, send_path, filename);
+                        uc.Visibility = Visibility.Visible;
+                        StackPanel stack = (StackPanel)this.FindName("stack" + onlineUsers.IndexOf(sel));
+                        stack.Children.Add(uc);
+
+                    }
+                }
+
             }
             catch (Exception e)
             {
@@ -137,11 +155,12 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 15000;
+          listener.Client.ReceiveTimeout = 3000;
 
             while (true)
             {
-                var ClientEp = new IPEndPoint(IPAddress.Any, 8888);
+                System.Console.WriteLine(onlineUsers);
+                var ClientEp = new IPEndPoint(IPAddress.Any, 8889);
 
                 Message.Udp_message packet_content = null;
 
@@ -159,16 +178,40 @@ namespace FileSharing
                     packet_content = (Message.Udp_message)bf.Deserialize(ms);
                     System.Console.WriteLine(packet_content.name+" "+packet_content.image.Size);
                     // var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
-                    if (!onlineUsers.Contains(packet_content.name))
+                    User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image);
+
+                    if (!onlineUsers.Contains(act_user))
                     {
-                        onlineUsers.Add(packet_content.name);
+                        onlineUsers.Add(act_user);
+                        System.Console.WriteLine("aggiunto elemento alla lista");
                     }
-                    set(packet_content, ClientEp);
+                    else
+                    {
+                        foreach (User user in onlineUsers)
+                        {
+
+                            // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
+                            var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
+                            if (diffInSeconds > 3)
+                                onlineUsers.Remove(user);
+                            else
+                            {
+                                if (user.Equals(act_user))
+                                {
+                                    user.Timestamp = DateTime.Now;
+                                    user.Image = packet_content.image;
+                                    System.Console.WriteLine("trovato elemento nella lista, non necessaria aggiunta");
+                                }
+                            }
+                        }
+                    }
+                    update_ui();
 
                 }
-                catch (SocketException ex) {
 
-                    reset(packet_content);
+                catch (SocketException ex) {
+                    update_list();
+                    update_ui();
                     continue;
 
                 }
@@ -176,7 +219,8 @@ namespace FileSharing
                 catch (Exception ex)
                 {
                     System.Console.WriteLine(ex.StackTrace);
-                    reset(packet_content);
+                    update_list();
+                    update_ui();
                     continue;
 
                 }
@@ -185,101 +229,128 @@ namespace FileSharing
         }
 
 
-        private void reset(Message.Udp_message packet)
+        /*   private void reset(Message.Udp_message packet)
+           {
+               _uiDispatcher.BeginInvoke(new Action(() =>
+               {
+                   Label label;
+                   Ellipse ellipse;
+                   try
+                   {
+                      // onlineUsers.Remove(packet.name);
+                       //label = (Label)this.FindName("label" + onlineUsers.IndexOf(packet.name));
+                       //ellipse = (Ellipse)this.FindName("ellipse" + onlineUsers.IndexOf(packet.name));
+
+
+                  // label.Content = " ";
+                  // ellipse.Fill.Opacity=0;
+
+                   }
+                   catch (Exception e)
+                   {
+
+                       return ;
+                   }
+                   //label0.Content = " ";
+                   //ellipse0.Fill.Opacity=0;
+
+               }));
+
+           }*/
+      
+
+
+        private void update_ui()
         {
             _uiDispatcher.BeginInvoke(new Action(() =>
             {
-                Label label;
-                Ellipse ellipse;
-                try
+
+                ImageBrush new_source  = new ImageBrush();
+
+                emptyElements();
+
+                foreach (User user in onlineUsers)
                 {
-                    onlineUsers.Remove(packet.name);
-                    label = (Label)this.FindName("label" + onlineUsers.IndexOf(packet.name));
-                    ellipse = (Ellipse)this.FindName("ellipse" + onlineUsers.IndexOf(packet.name));
+                
+                    try
+                    {
+                    int id = onlineUsers.IndexOf(user);
+                    CheckBox chech = (CheckBox)this.FindName("checkbox" +id);
+                    chech.Visibility = Visibility.Visible;
+                    Label label = (Label)this.FindName("label" + id);
+                    //label1.Content = packet.name;
+                    label.Content = user.Name;
+
+
+                   
                
+                        new_source.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(user.Image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                label.Content = " ";
-                ellipse.Fill.Opacity=0;
+                    }
+                    catch (Exception ex)
+                    {
+                        ex.ToString();
+                        new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
+                    }
 
+                    Ellipse ellipse = (Ellipse)this.FindName("ellipse" + id);
+
+                    ellipse.Fill = new_source;
+                    ellipse.Fill.Opacity = 100;
                 }
-                catch (Exception e)
-                {
-
-                    return ;
-                }
-                //label0.Content = " ";
-                //ellipse0.Fill.Opacity=0;
-
             }));
-
+        
         }
 
-        private void set(Message.Udp_message packet, IPEndPoint ClientEp)
-        {
-            _uiDispatcher.BeginInvoke(new Action(() =>
+
+        private void update_list() {
+
+            try
             {
 
-                Label label=(Label) this.FindName("label"+onlineUsers.IndexOf(packet.name));
-                //label1.Content = packet.name;
-                label.Content= packet.name;
-
-                ImageBrush new_source = new ImageBrush();
-
-                try
+                foreach (User user in new System.Collections.ArrayList(onlineUsers))
                 {
 
-                    new_source.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(packet.image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
+                    var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
+                    if (diffInSeconds >= 10)
+                    {
+                        onlineUsers.Remove(user);
+                        System.Console.WriteLine("rimosso utente" + user.Name);
+
+                    }
 
                 }
-                catch (Exception ex)
-                {
-                    ex.ToString();
-                    new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
-                }
-
-                Ellipse ellipse = (Ellipse)this.FindName("ellipse" + onlineUsers.IndexOf(packet.name));
-
-                ellipse.Fill = new_source;
-                ellipse.Fill.Opacity = 100;
-
-                //ellipse0.Fill = new_source;
-                //ellipse0.Fill.Opacity = 100;
-
-            }));
-        }
-
+            }
+            catch (Exception ex) { System.Console.WriteLine(ex.ToString()); }
+            }
+        
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
+            listen = false;
             for (int i = 0; i < 10; i++) {
 
                 CheckBox check = (CheckBox)this.FindName("checkbox" + i);
                 if (check.IsChecked == true)
                 {
-                    Label label = (Label)this.FindName("label" + i);
-                    label.Content = "isCheked";
+                    onlineUsers[i].isSelected=true;
+                    //Label label = (Label)this.FindName("label" + i);
+                    //label.Content = "isCheked";
                 }
-
 
             }
 
-            HideAllControl();
-            UserControl1 uc = new UserControl1();
-            uc.Name = "progress";
-            uc.Visibility = Visibility.Visible;
-            StackPanel stack = new StackPanel { Orientation = Orientation.Horizontal };
-            stack.VerticalAlignment = VerticalAlignment.Center;
-            stack.HorizontalAlignment = HorizontalAlignment.Center;
-            stack.Children.Add(uc);
-            this.Content = stack;
+            DisableAllControl();
+            Button ok = (Button)sender;
+            ok.Content = "OK"; 
+            // UserControl uc = new UserControl();
+
+
             send_file();
 
         }
 
-
-
-
-        private void HideAllControl()
+        private void DisableAllControl()
         {
             /// casting the content into panel
             Panel mainContainer = (Panel)this.Content;
@@ -295,16 +366,35 @@ namespace FileSharing
 
             foreach (Control contol in lstControl)
             {
-                ///Hide all Controls
-                contol.Visibility = System.Windows.Visibility.Hidden;
+
+                    ///Hide all Controls
+                    contol.IsEnabled =false;
             }
         }
 
-        private void checkbox2_Checked(object sender, RoutedEventArgs e)
+        private void button_annulla_Click(object sender, RoutedEventArgs e)
         {
 
+            App.Current.Shutdown();
+
         }
-    }
+
+
+        private void emptyElements() {
+
+            for (int i=0; i<10;i++)
+            {
+                try
+                {
+                   // int id = onlineUsers.IndexOf(user);
+                    CheckBox chech = (CheckBox)this.FindName("checkbox" + i);
+                    chech.Visibility = Visibility.Hidden;
+                }
+                catch (Exception ex) { ex.ToString(); }
+
+            }
+        }
+     }
     }
 
 

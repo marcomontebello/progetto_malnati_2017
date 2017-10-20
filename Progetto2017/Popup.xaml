@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Popup" ResizeMode="NoResize" Height="123.801" Width="226.189" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="0.8" OpacityMask="Black" Background="#FF212121" AllowsTransparency="True" WindowStyle="None">
+        Title="Popup" ResizeMode="NoResize" Height="137.95" Width="255" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="0.8" OpacityMask="Black" Background="#FF040404" AllowsTransparency="True" WindowStyle="None">
     <Window.Effect>
         <DropShadowEffect/>
     </Window.Effect>
