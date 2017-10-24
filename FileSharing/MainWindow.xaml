@@ -12,6 +12,7 @@
             <RowDefinition Height="2*" />
             <RowDefinition Height="2*" />
         </Grid.RowDefinitions>
+    
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
@@ -19,16 +20,18 @@
             <ColumnDefinition Width="1*"/>
             <ColumnDefinition Width="1*"/>
 
-
+           
         </Grid.ColumnDefinitions>
-        <CheckBox Name="checkbox0" Selector.IsSelected="True" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack0" Orientation="Vertical">
-                <Ellipse Name="ellipse0"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label0" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center" />
+
+ 
+        <CheckBox Name="checkbox0" Selector.IsSelected="True" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Style="{DynamicResource CheckBoxStyle1}" Checked="checkbox0_Checked" >
+            <StackPanel Name="stack0" Orientation="Vertical" Margin="0,0,0,-15">
+                <Ellipse x:Name="ellipse0"  Stretch="UniformToFill" Margin="5,5,5,5" Stroke="#FF1616D1" StrokeThickness="0"  />
+                <Label x:Name="label0" VerticalAlignment="Center"  Content="prova" Height="27" />
 
             </StackPanel>
         </CheckBox>
-        <CheckBox Name="checkbox1" Selector.IsSelected="True" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
+        <CheckBox Name="checkbox1" Selector.IsSelected="True" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden" Style="{DynamicResource CheckBoxStyle1}">
             <StackPanel Name="stack1" Orientation="Vertical">
                 <Ellipse Name="ellipse1"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
                 <Label Name="label1" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>

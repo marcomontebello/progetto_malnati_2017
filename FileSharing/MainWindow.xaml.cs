@@ -55,31 +55,6 @@ namespace FileSharing
             InitializeComponent();
             _uiDispatcher = Dispatcher.CurrentDispatcher;
             Task.Factory.StartNew(UDP_listening_PI1);
-
-/*
-            ///////////////prova update immagini manwindow
-            for (int i = 0; i < 10; i++)
-            {
-                Label label = (Label)this.FindName("label" + i);
-                //label1.Content = packet.name;
-                label.Content = "prova" + i;
-
-                ImageBrush new_source = new ImageBrush();
-
-
-
-
-                new_source.ImageSource = new BitmapImage(new Uri("pack://application:,,,/Resources/user_profile_male.jpg"));
-
-
-                Ellipse ellipse = (Ellipse)this.FindName("ellipse" + i);
-
-                ellipse.Fill = new_source;
-                ellipse.Fill.Opacity = 100;
-
-            }
-            /////prova invio file
-            */
         }
 
 
@@ -279,12 +254,8 @@ namespace FileSharing
                     chech.Visibility = Visibility.Visible;
                     Label label = (Label)this.FindName("label" + id);
                     //label1.Content = packet.name;
-                    label.Content = user.Name;
-
-
-                   
-               
-                        new_source.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(user.Image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                    label.Content = user.Name;         
+                    new_source.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(user.Image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     }
                     catch (Exception ex)
@@ -344,8 +315,6 @@ namespace FileSharing
             Button ok = (Button)sender;
             ok.Content = "OK"; 
             // UserControl uc = new UserControl();
-
-
             send_file();
 
         }
@@ -394,7 +363,13 @@ namespace FileSharing
 
             }
         }
-     }
+
+        private void checkbox0_Checked(object sender, RoutedEventArgs e)
+        {
+            ellipse0.StrokeThickness = 3;
+
+        }
+    }
     }
 
 
