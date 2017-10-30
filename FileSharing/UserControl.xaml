@@ -1,9 +1,0 @@
-﻿<ProgressBar x:Class="FileSharing.ProgressBar"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:FileSharing"
-             mc:Ignorable="d"
-             Minimum="0" Maximum="100" Name="pbstatus"
-             Height="13" Width="390" Background="#FFAEABF0" VerticalAlignment="Center" BorderBrush="#FF2A3789" Foreground="#FF082AC3"/>

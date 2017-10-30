@@ -1,16 +1,25 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Drawing;
 using System.Net;
+using System.Windows;
+using System.Windows.Interop;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FileSharing
 {
-    internal class User :IEquatable<User>
+    public class User :IEquatable<User> , INotifyPropertyChanged
     {
         string ip { get; set; }
         string name { get; set; }
         Bitmap img { get; set; }
+        ImageBrush ib { get; set; }
         DateTime timestamp { get; set; }
-        bool is_selected { get; set; }
+        int progress { get; set; }
+        int time_left { get; set; } 
+        string label_time { get; set; }
 
         public DateTime Timestamp
         {
@@ -18,40 +27,85 @@ namespace FileSharing
             set { timestamp = value; }
         }
 
+        public int Time_left
+        {
+            get { return time_left; }
+            set
+            {
+                time_left = value;
+                label_time = value.ToString();
+                this.NotifyPropertyChanged("Time_left");
+            }
+        }
+
+        public string Label_time
+        {
+            get { return label_time; }
+            set
+            {
+                label_time = "Tempo rimanente stimato: "+value+ "sec.";
+                this.NotifyPropertyChanged("Label_time");
+            }
+
+        }
+        public int Progress {
+
+            get { return progress; }
+            set { progress = value;
+                this.NotifyPropertyChanged("Progress");
+            }
+        }
+
+        public ImageBrush Brush {
+
+            get { return ib; }
+            set { ib = value;  }
+
+        }
+
         public string Address
         {
             get { return ip; }
-            set { ip = value; }
+            set { ip = value;
+                this.NotifyPropertyChanged("Address");
+            }
         }
 
-        public bool isSelected
-        {
-            get { return is_selected; }
-            set { is_selected = value; }
-        }
         public string Name
         {
             get { return name; }
-            set { name = value; }
+            set { name = value;
+                 this.NotifyPropertyChanged("Name");
+                  }
         }
         public Bitmap Image
         {
             get { return img; }
-            set { img = value; }
+            set { img = value;
+                this.NotifyPropertyChanged("Image");
+            }
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
 
-        public User(string address, string name, DateTime timestamp, Bitmap img)
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
+        }
+
+        public User(string address, string name, DateTime timestamp, Bitmap img,ImageBrush ib) 
         {
 
             this.ip = address;
             this.name = name;
             this.timestamp = timestamp;
             this.img = img;
+            this.ib = ib;
 
         }
 
-        
+
         public override bool Equals(object obj)
         {
             return this.Equals(obj as User);
@@ -87,6 +141,7 @@ namespace FileSharing
         {
             return   0x00010000;
         }
+  
 
     }
 }

@@ -6,91 +6,41 @@
         xmlns:local="clr-namespace:FileSharing"       
         mc:Ignorable="d"
         Height="448" Width="667" Icon="Resources/MyIcon.ico" ResizeMode="NoResize">
-    <Grid x:Name="root_grid" Margin="28,51,28,56">
+    <DockPanel  LastChildFill="True">
+        <ListBox  Name="userOnlineList" ItemsSource="{Binding}" SelectionMode="Multiple"  SelectionChanged="userOnlineList_SelectionChanged" Margin="0,50,0,54" Width="655">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="2*" />
-            <RowDefinition Height="2*" />
-        </Grid.RowDefinitions>
-    
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
-            <ColumnDefinition Width="1*"/>
+                    <CheckBox Selector.IsSelected="True" HorizontalAlignment="Center"  Cursor="Hand" Visibility="Visible" Style="{DynamicResource CheckBoxStyle1}" Background="White" IsEnabled="True" IsChecked="{Binding IsSelected, 
+    RelativeSource={RelativeSource AncestorType={x:Type ListBoxItem}}}">
+                        <StackPanel Orientation="Vertical" Margin="0,0,0,0" >
+                            <Ellipse Name="ellipse1" VerticalAlignment="Top" Stretch="UniformToFill" Fill="{Binding Brush}"  ></Ellipse>
+                            <Label Name="label1"   Content="{Binding Name}" />
+                        </StackPanel>
+                        </CheckBox>
 
-           
-        </Grid.ColumnDefinitions>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="Margin" Value="5"/>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+        <Grid DockPanel.Dock="Bottom" Margin="-245,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="26" />
+                <RowDefinition Height="34"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+            <Button Name="button_invia" Content="Invia" Grid.Column="0" Click="button_Click" Margin="20,15,20,15" Grid.RowSpan="2" />
+            <Button Name="gbutton_annulla" Content="Annulla" Grid.Column="1" Click="button_annulla_Click" Margin="20,15,20,15" Grid.RowSpan="2"/>
+        </Grid>
+        <Label x:Name="label" Content="Scegli con chi condividere:" HorizontalAlignment="Left" VerticalAlignment="Top"  Width="650" FontFamily="Nirmala UI Semilight" FontSize="18" DockPanel.Dock="Top" Margin="-650,0,0,0"/>
+    </DockPanel>
 
- 
-        <CheckBox Name="checkbox0" Selector.IsSelected="True" Grid.Column="0" Grid.Row="0" HorizontalAlignment="Left" Height="126" Margin="10,10,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Style="{DynamicResource CheckBoxStyle1}" Checked="checkbox0_Checked" >
-            <StackPanel Name="stack0" Orientation="Vertical" Margin="0,0,0,-15">
-                <Ellipse x:Name="ellipse0"  Stretch="UniformToFill" Margin="5,5,5,5" Stroke="#FF1616D1" StrokeThickness="0"  />
-                <Label x:Name="label0" VerticalAlignment="Center"  Content="prova" Height="27" />
-
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox1" Selector.IsSelected="True" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden" Style="{DynamicResource CheckBoxStyle1}">
-            <StackPanel Name="stack1" Orientation="Vertical">
-                <Ellipse Name="ellipse1"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label1" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox2" Selector.IsSelected="True" Grid.Column="2" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack2" Orientation="Vertical">
-                <Ellipse Name="ellipse2"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label2" VerticalAlignment="Center" Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox3" Selector.IsSelected="True" Grid.Column="3" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack3" Orientation="Vertical">
-                <Ellipse Name="ellipse3"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label3" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox4" Selector.IsSelected="True" Grid.Column="4" Grid.Row="0" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack4" Orientation="Vertical">
-                <Ellipse Name="ellipse4"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label4" VerticalAlignment="Center" Content="prova" HorizontalAlignment="Center" />
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox5" Selector.IsSelected="True" Grid.Column="0" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack5" Orientation="Vertical">
-                <Ellipse Name="ellipse5"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label5" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox6" Selector.IsSelected="True" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack6" Orientation="Vertical">
-                <Ellipse Name="ellipse6"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label6" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox7" Selector.IsSelected="True" Grid.Column="2" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack7" Orientation="Vertical">
-                <Ellipse Name="ellipse7"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label7" VerticalAlignment="Center"  Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <CheckBox Name="checkbox8" Selector.IsSelected="True" Grid.Column="3" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100"  Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack8" Orientation="Vertical">
-                <Ellipse Name="ellipse8"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label8" VerticalAlignment="Center"   Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-
-        <CheckBox Name="checkbox9" Selector.IsSelected="True" Grid.Column="4" Grid.Row="1" HorizontalAlignment="Left" Height="115" Margin="11,30,0,0" VerticalAlignment="Top" Width="100" Cursor="Hand" Visibility="Hidden">
-            <StackPanel Name="stack9" Orientation="Vertical">
-                <Ellipse Name="ellipse9"  Stretch="UniformToFill" Margin="5,5,5,5" ></Ellipse>
-                <Label Name="label9" VerticalAlignment="Bottom"   Content="prova" HorizontalAlignment="Center"/>
-            </StackPanel>
-        </CheckBox>
-        <Button x:Name="button_invia" Content="Invia" Grid.Column="4" Margin="26,168,10,-45" Grid.Row="1" Click="button_Click"/>
-        <Button x:Name="button_annulla" Content="Annulla" Grid.Column="3" Margin="33,168,2,-45" Grid.Row="1" Click="button_annulla_Click"/>
-        <Label x:Name="label" Content="Scegli con chi condividere:" HorizontalAlignment="Left" Margin="-3,-45,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="235" FontFamily="Nirmala UI Semilight" FontSize="18" Cursor="Hand"/>
-
-
-
-    </Grid>
 </Window>
