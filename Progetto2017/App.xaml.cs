@@ -43,7 +43,7 @@ namespace Progetto2017
             //Creazione entry context menu per i file
             FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", menuCommand);
             _popupWindow.button.Click += (s, args) => ExitApplication(_popupWindow);
-            _popupWindow.textBlock.MouseLeftButtonDown += (s, args) => ShowMainWindow();
+            _popupWindow.textBlock.Click += (s, args) => ShowMainWindow();
 
         }
 

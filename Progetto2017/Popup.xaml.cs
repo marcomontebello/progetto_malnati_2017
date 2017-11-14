@@ -30,7 +30,7 @@ namespace Progetto2017
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
+      
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
@@ -42,6 +42,11 @@ namespace Progetto2017
             }
             else
                 button1.Content = "Stato: \nOnline";
+        }
+
+        private void textBlock_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

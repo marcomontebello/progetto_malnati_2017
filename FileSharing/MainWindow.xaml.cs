@@ -39,10 +39,9 @@ namespace FileSharing
         //You probably need something like below.
 
 
-        //string[] args = Environment.GetCommandLineArgs(); 
+        string[] args = Environment.GetCommandLineArgs(); 
         private readonly Dispatcher _uiDispatcher;
         private int id = 0;
-        string ip_graziano = "192.168.1.186";
         string temp_path = null;
 
         //diventerà lista quando gestiremo utenti multipli
@@ -55,81 +54,10 @@ namespace FileSharing
         public MainWindow()
         {
             InitializeComponent();
-
+            this.Title ="Condividi il file x con:";
               userOnlineList.ItemsSource = onlineUsers;
              _uiDispatcher = Dispatcher.CurrentDispatcher;
              Task.Factory.StartNew(UDP_listening_PI1);
-
-        }
-
-
-      private void send_file()
-        {
-            try
-            {
-
-                //string to_send = args[1];
-                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
-
-                FileAttributes attr = File.GetAttributes(send_path);
-                bool is_dir=false;
-
-                if (attr.HasFlag(FileAttributes.Directory))
-                {
-                    //label0.Content = ell.Name;
-                    //to_send = to_send.Split('\\').Last();
-                    is_dir = true;
-                    //temp_path = System.IO.Path.GetTempPath()+"\\"+ send_path.Split('\\').Last() + ".zip";
-                    ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR");
-                    send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR";
-                    DirectoryInfo dInfo = new DirectoryInfo(send_path);
-
-                    DirectorySecurity dSecurity = dInfo.GetAccessControl();
-                    dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl,
-                                                 InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
-                                                 PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-                    dInfo.SetAccessControl(dSecurity);
-
-
-                    Console.WriteLine("Ho creato il file zip:" + send_path);
-                    // ZipFile.ExtractToDirectory("C:\\Users\\Marco Montebello\\Desktop\\prova.zip", "C:\\Users\\Marco Montebello\\Desktop\\CAZZO");
-
-
-                }
-
-                string filename = send_path.Split('\\').Last();
-
-                //System.Console.WriteLine("path:" + send_path);
-                //System.Console.WriteLine("filename:" + filename);
-
-                // senderTCP invio_file = new senderTCP(ip_graziano, send_path, filename);
-
-
-
-                // Task sendTask = Task.Factory.StartNew(invio_file.sendFile);
-                // sendTask.Wait();
-
-                Transfers transf_windows = new Transfers(selectedUsers,send_path,filename,is_dir);
-                transf_windows.Show();
-
-              /*  foreach (User sel in selectedUsers)
-                {
-
-               
-                        UserControl uc = new UserControl(sel.Address, send_path, filename);
-                        uc.Visibility = Visibility.Visible;
-                        StackPanel stack = (StackPanel)this.FindName("stack" + onlineUsers.IndexOf(sel));
-                        stack.Children.Add(uc);
-
-                    }*/
-                
-            }
-            catch (Exception e)
-            {
-
-                System.Console.WriteLine(e.StackTrace);
-            }
 
         }
     
@@ -139,7 +67,7 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 3000;
+          listener.Client.ReceiveTimeout = 10000;
 
             while (true)
             {
@@ -183,7 +111,7 @@ namespace FileSharing
 
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 3)
+                                if (diffInSeconds > 10)
                                     onlineUsers.Remove(user);
                                 else
                                 {
@@ -201,6 +129,7 @@ namespace FileSharing
                 }
 
                 catch (SocketException ex) {
+
                     update_list();
                     //update_ui();
                     continue;
@@ -218,7 +147,6 @@ namespace FileSharing
 
             }
         }
-
 
         private void update_list() {
 
@@ -263,7 +191,6 @@ namespace FileSharing
 
         }
 
-
         private void button_annulla_Click(object sender, RoutedEventArgs e)
         {
 
@@ -271,13 +198,64 @@ namespace FileSharing
 
         }
 
-
-
         private void userOnlineList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
 
         }
+
+        private void send_file()
+        {
+            try
+            {
+
+                string send_path = args[1];
+                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
+                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+
+                FileAttributes attr = File.GetAttributes(send_path);
+                bool is_dir = false;
+
+                if (attr.HasFlag(FileAttributes.Directory))
+                {
+                 
+                    is_dir = true;
+                    temp_path = System.IO.Path.GetTempPath()+ send_path.Split('\\').Last() + ".LAN_DIR";
+                    if (!(File.Exists(temp_path)))
+                        //   ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\PROVA.LAN_DIR");
+                        ZipFile.CreateFromDirectory(send_path,temp_path);
+
+                    //send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR";
+                    send_path = temp_path;
+                    System.Console.WriteLine( send_path);
+
+                    DirectoryInfo dInfo = new DirectoryInfo(send_path);
+
+                    DirectorySecurity dSecurity = dInfo.GetAccessControl();
+                    dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl,
+                                                 InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
+                                                 PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+                    dInfo.SetAccessControl(dSecurity);
+                    Console.WriteLine("Ho creato il file zip:" + send_path);
+
+
+                }
+
+                string filename = send_path.Split('\\').Last();
+
+                Transfers transf_windows = new Transfers(selectedUsers, send_path, filename, is_dir);
+                transf_windows.Show();
+
+            }
+            catch (Exception e)
+            {
+
+                System.Console.WriteLine(e.StackTrace);
+            }
+
+        }
     }
+
+
     }
 
 

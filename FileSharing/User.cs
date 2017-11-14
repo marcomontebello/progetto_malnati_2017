@@ -20,6 +20,7 @@ namespace FileSharing
         int progress { get; set; }
         int time_left { get; set; } 
         string label_time { get; set; }
+        Boolean transfer_status { get; set; }
 
         public DateTime Timestamp
         {
@@ -38,12 +39,29 @@ namespace FileSharing
             }
         }
 
+        public Boolean TransferStatus
+        {
+            get { return transfer_status; }
+            set
+            {
+                transfer_status = value;
+                
+                this.NotifyPropertyChanged("TransferStatus");
+            }
+        }
+
         public string Label_time
         {
             get { return label_time; }
             set
             {
-                label_time = "Tempo rimanente stimato: "+value+ "sec.";
+ 
+                int number1;
+                bool canConvert = int.TryParse(value, out number1);
+                if (canConvert)
+                    label_time = "Tempo rimanente stimato: " + value + "sec.";
+                else
+                    label_time = value;
                 this.NotifyPropertyChanged("Label_time");
             }
 
@@ -53,7 +71,15 @@ namespace FileSharing
             get { return progress; }
             set { progress = value;
                 this.NotifyPropertyChanged("Progress");
+                this.NotifyPropertyChanged("ProgressText");
             }
+        }
+
+        public string ProgressText
+        {
+
+            get { return progress+"%"; }
+
         }
 
         public ImageBrush Brush {
@@ -102,6 +128,7 @@ namespace FileSharing
             this.timestamp = timestamp;
             this.img = img;
             this.ib = ib;
+            this.transfer_status = false;
 
         }
 

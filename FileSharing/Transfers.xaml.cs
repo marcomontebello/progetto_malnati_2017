@@ -34,12 +34,23 @@ namespace FileSharing
         private string filename;
         private bool is_dir;
         BackgroundWorker worker;
+        List<BackgroundWorker> bgws = new List<BackgroundWorker>();
 
-        private int num_completed_transf=0;
+        public string Filename {
+
+            get { return (String)GetValue(Transfers.TitleProperty); }
+            set
+            {
+                SetValue(Transfers.TitleProperty, value);
+            }
+
+        }
+
 
         public Transfers()
         {
             InitializeComponent();
+            this.button_ok.IsEnabled = false;
         }
         public Transfers(ObservableCollection<User> list,string path, string filename,bool is_dir) {
 
@@ -51,18 +62,22 @@ namespace FileSharing
             this.userSelectedList.ItemsSource = users;
 
             this.send_path = path;
-            this.filename = filename;
+            Filename = filename;
             this.is_dir = is_dir;
 
-            transfer();
+
+            transfer(bgws);
 
 
         }
 
-      
-        private void transfer() {
+     
+        private void transfer(List<BackgroundWorker> bgws) {
 
-            try { 
+
+
+            try
+            { 
 
                 System.Console.WriteLine("path:" + send_path);
                 System.Console.WriteLine("filename:" + filename);
@@ -89,8 +104,11 @@ namespace FileSharing
                     worker.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
                     worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
+                    bgws.Add(worker);
+                    System.Console.WriteLine("list bg worker"+bgws.Count);
+
+
                     worker.RunWorkerAsync(user);
-                   // this.user.Progress = 1000;
 
                 }
 
@@ -110,6 +128,8 @@ namespace FileSharing
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
 
+            user.TransferStatus = true;
+
             try
             {
 
@@ -121,8 +141,7 @@ namespace FileSharing
                 byte[] buffer = null;
                 byte[] header = null;
 
-
-                FileStream fs = new FileStream(this.send_path, FileMode.Open);
+                FileStream fs = new FileStream(this.send_path, FileMode.Open, FileAccess.Read, FileShare.Read);
                 int bufferCount = Convert.ToInt32(Math.Ceiling((double)fs.Length / (double)bufferSize));
 
                 System.Console.WriteLine("ip to which send:" + ipAddr);
@@ -168,17 +187,24 @@ namespace FileSharing
                     {
                         e.Cancel = true;
                         percentage = 0;
-                        user.Time_left = -1;
+                        user.Label_time = "Trasferimento annullato";
                         (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                         return;
                     }
+
+
+
                 }
 
+                ////////////////////////////
+                e.Result = user;
+                ///////////////////////////////////////////////////////////
                 Console.WriteLine("File " + send_path + " inviato a " + ipAddr);
 
                 tcpClient.Client.Close();
                 fs.Close();
                 FileAttributes attr = File.GetAttributes(send_path);
+
 
                 if (is_dir == true)
                 {
@@ -190,9 +216,11 @@ namespace FileSharing
             }
             catch (Exception ex)
             {
-
-                System.Console.WriteLine(ex.StackTrace);
-
+                double percentage = 0;
+                user.Label_time = "Errore durante il trasferimento";
+                (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
+                e.Result = user;
+                throw;
             }
 
         }
@@ -201,35 +229,64 @@ namespace FileSharing
         public void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             User user = e.UserState as User;
-            user.Progress = e.ProgressPercentage;
+
+            if (e.ProgressPercentage > 100)
+                user.Progress = 100;
+            else
+                user.Progress = e.ProgressPercentage;
             //user.Name = e.ProgressPercentage.ToString();
             System.Console.WriteLine("user progress after:" + user.Progress);
             System.Console.WriteLine("tiem left:" + user.Time_left);
 
         }
 
-        static void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        public void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
 
-            if (e.Cancelled)
+            BackgroundWorker bgw = (BackgroundWorker)sender;
+
+            if (e.Error != null)
             {
-                MessageBox.Show("The task has been cancelled");
-               
+                //User user = e.Result as User;
+                //user.Label_time = "Trasferimento probabilmente cancellato dal destinatario";
+
+
             }
-            else if (e.Error != null)
+
+            else if (e.Cancelled)
             {
-                MessageBox.Show("Error. Details: " + (e.Error as Exception).ToString());
+                //User user = e.Result as User;
+                //user.Label_time = "Trasferimento annullato";
+
             }
+
             else
             {
-              //  MessageBox.Show("The task has been completed. Results: " + e.Result.ToString());
+                User user = e.Result as User;
+                user.Label_time = "Trasferimento concluso con successo";
             }
-           
+
+            bgws.Remove(bgw);
+
+            System.Console.WriteLine("list bg worker" + bgws.Count);
+            if (bgws.Count == 0) 
+            this.button_ok.IsEnabled = true;
+        
+
+
+
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             worker.CancelAsync();
+
+        }
+
+        private void button_ok_Click(object sender, RoutedEventArgs e)
+        {
+
+            System.Windows.Application.Current.Shutdown();
 
         }
     }
