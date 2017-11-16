@@ -110,6 +110,7 @@ namespace FileSharing
 
                     worker.RunWorkerAsync(user);
 
+        
                 }
 
             }
@@ -127,8 +128,6 @@ namespace FileSharing
             User user = e.Argument as User;
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-
-            user.TransferStatus = true;
 
             try
             {
@@ -149,6 +148,8 @@ namespace FileSharing
                 TcpClient tcpClient = new TcpClient(ipAddr, 11000);
                 tcpClient.SendTimeout = 600000;
                 tcpClient.ReceiveTimeout = 600000;
+
+            
 
                 string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\n";
                 header = new byte[bufferSize];
@@ -188,11 +189,11 @@ namespace FileSharing
                         e.Cancel = true;
                         percentage = 0;
                         user.Label_time = "Trasferimento annullato";
+                        user.TransferStatus = "#FFB80202";
                         (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
+                        tcpClient.Close();
                         return;
                     }
-
-
 
                 }
 
@@ -218,6 +219,7 @@ namespace FileSharing
             {
                 double percentage = 0;
                 user.Label_time = "Errore durante il trasferimento";
+                user.TransferStatus = "#FFB80202"; 
                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                 e.Result = user;
                 throw;
@@ -287,6 +289,39 @@ namespace FileSharing
         {
 
             System.Windows.Application.Current.Shutdown();
+
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+
+            if (bgws.Count > 0)
+            {
+                string msg = "Ci sono trasferimenti in corso. Annullarli ed uscire?";
+                MessageBoxResult result =
+                  MessageBox.Show(
+                    msg,
+                    "Attenzione",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.No)
+                {
+                    // If user doesn't want to close, cancel closure
+                    e.Cancel = true;
+                }
+
+                else {
+
+                    foreach (BackgroundWorker bgw in bgws)
+                        bgw.CancelAsync();
+
+                    System.Windows.Application.Current.Shutdown();
+
+
+                }
+
+            }
 
         }
     }

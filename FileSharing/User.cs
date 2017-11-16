@@ -20,7 +20,7 @@ namespace FileSharing
         int progress { get; set; }
         int time_left { get; set; } 
         string label_time { get; set; }
-        Boolean transfer_status { get; set; }
+        string transfer_status { get; set; }
 
         public DateTime Timestamp
         {
@@ -39,7 +39,7 @@ namespace FileSharing
             }
         }
 
-        public Boolean TransferStatus
+        public string TransferStatus
         {
             get { return transfer_status; }
             set
@@ -128,7 +128,7 @@ namespace FileSharing
             this.timestamp = timestamp;
             this.img = img;
             this.ib = ib;
-            this.transfer_status = false;
+            this.transfer_status = "#FFBCBCBC";
 
         }
 

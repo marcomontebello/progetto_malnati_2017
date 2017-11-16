@@ -41,7 +41,7 @@ namespace FileSharing
 
         string[] args = Environment.GetCommandLineArgs(); 
         private readonly Dispatcher _uiDispatcher;
-        private int id = 0;
+       // private int id = 0;
         string temp_path = null;
 
         //diventerà lista quando gestiremo utenti multipli
@@ -54,10 +54,11 @@ namespace FileSharing
         public MainWindow()
         {
             InitializeComponent();
-            this.Title ="Condividi il file x con:";
-              userOnlineList.ItemsSource = onlineUsers;
-             _uiDispatcher = Dispatcher.CurrentDispatcher;
-             Task.Factory.StartNew(UDP_listening_PI1);
+           
+            this.Title = "Condividi il file " + args[0].Substring(args[0].LastIndexOf('\\')+1)+ " con:";
+            userOnlineList.ItemsSource = onlineUsers;
+            _uiDispatcher = Dispatcher.CurrentDispatcher;
+            Task.Factory.StartNew(UDP_listening_PI1);
 
         }
     
@@ -71,6 +72,13 @@ namespace FileSharing
 
             while (true)
             {
+                if (onlineUsers.Count == 0)
+                    _uiDispatcher.Invoke(new Action(() =>
+                    {
+                        label.Content = "Nessun utente connesso in LAN, attendere.";
+                        button_invia.IsEnabled = false;
+
+                    }));
                 //System.Console.WriteLine(onlineUsers);
                 var ClientEp = new IPEndPoint(IPAddress.Any, 8889);
 
@@ -101,8 +109,15 @@ namespace FileSharing
 
                         if (!onlineUsers.Contains(act_user))
                         {
-                            onlineUsers.Add(act_user);
-                           // System.Console.WriteLine("aggiunto elemento alla lista");
+                            
+
+                                onlineUsers.Add(act_user);
+                                button_invia.IsEnabled = true;
+                                label.Content = "Scegli con chi condividere:";
+
+                     
+
+                            // System.Console.WriteLine("aggiunto elemento alla lista");
                         }
                         else
                         {
@@ -112,14 +127,27 @@ namespace FileSharing
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
                                 if (diffInSeconds > 10)
-                                    onlineUsers.Remove(user);
+                                {
+
+                                        _uiDispatcher.Invoke(new Action(() =>
+                                        {
+                                            onlineUsers.Remove(user);
+                                            if (onlineUsers.Count == 0)
+                                            {
+                                                label.Content = "Nessun utente connesso in LAN, attendere.";
+                                                button_invia.IsEnabled = false;
+                                            }
+
+                                        }));
+                                }
+
                                 else
                                 {
                                     if (user.Equals(act_user))
                                     {
                                         user.Timestamp = DateTime.Now;
                                         user.Image = packet_content.image;
-                                    //    System.Console.WriteLine("trovato elemento nella lista, non necessaria aggiunta");
+                                        //    System.Console.WriteLine("trovato elemento nella lista, non necessaria aggiunta");
                                     }
                                 }
                             }
@@ -131,7 +159,6 @@ namespace FileSharing
                 catch (SocketException ex) {
 
                     update_list();
-                    //update_ui();
                     continue;
 
                 }
@@ -140,7 +167,6 @@ namespace FileSharing
                 {
                     System.Console.WriteLine(ex.StackTrace);
                     update_list();
-                    //update_ui();
                     continue;
 
                 }
@@ -159,14 +185,25 @@ namespace FileSharing
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
                     if (diffInSeconds >= 10)
                     {
-                        onlineUsers.Remove(user);
+                            _uiDispatcher.Invoke(new Action(() =>
+                            {
+
+                                onlineUsers.Remove(user);
+
+                                if (onlineUsers.Count == 0)
+                                    label.Content = "Nessun utente connesso in LAN, attendere.";
+                                button_invia.IsEnabled = false;
+
+
+                                /* Your code here */
+                            }));
                         //System.Console.WriteLine("rimosso utente" + user.Name);
                     }
                 }
             }
             catch (Exception ex) { System.Console.WriteLine(ex.ToString()); }
             }
-        
+
         private void button_Click(object sender, RoutedEventArgs e)
         {
 
@@ -175,15 +212,31 @@ namespace FileSharing
             foreach (User u in userOnlineList.SelectedItems)
                 selectedUsers.Add(u);
 
-           // selectedUsers = userOnlineList.SelectedItems as ObservableCollection<User>;
+            // selectedUsers = userOnlineList.SelectedItems as ObservableCollection<User>;
             System.Console.WriteLine("###########################################################################################################################");
 
             System.Console.WriteLine(selectedUsers.Count);
-            foreach(User u in selectedUsers)
+            foreach (User u in selectedUsers)
                 System.Console.WriteLine(u.Address);
 
+            if (selectedUsers.Count == 0) { 
+            string msg = "Seleziona almeno un utente";
+            MessageBoxResult result =
+              MessageBox.Show(
+                msg,
+                "Attenzione",
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
 
-            System.Console.WriteLine("###########################################################################################################################");
+                if (result == MessageBoxResult.OK)
+                {
+                        return;
+                    // If user doesn't want to close, cancel closure
+                }
+
+             }
+
+           System.Console.WriteLine("###########################################################################################################################");
             send_file();
             this.Close();
             //transf_windows.userSelectedList.ItemsSource = selectedUsers;    
@@ -208,9 +261,10 @@ namespace FileSharing
             try
             {
 
-                string send_path = args[1];
+                //string send_path = args[1];
+
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);
                 bool is_dir = false;

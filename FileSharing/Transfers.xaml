@@ -5,8 +5,45 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:FileSharing"
         mc:Ignorable="d"
-        Title="{Binding Path=Filename}"  Height="Auto" Width="604" ResizeMode="NoResize">
+        Closing="Window_Closing"  
+        Title="{Binding Path=Filename}"  Height="Auto" Width="604" ResizeMode="NoResize" d:DesignHeight="456" Icon="Resources/MyIcon.ico">
     <Window.Resources>
+            <Style TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="#FF2B6FFF" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                                <Grid>
+                                    <Path x:Name="PathIcon" Width="15" Height="25" Stretch="Fill" Fill="#4C87B3" HorizontalAlignment="Left" Margin="17,0,0,0" />
+                                    <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                                </Grid>
+                            </Border>
+
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="#FF38AEFF" />
+                                    <Setter Property="Foreground" Value="White" />
+                                    <Setter TargetName="PathIcon" Property="Fill" Value="Black" />
+                                </Trigger>
+
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter Property="Background" Value="#FF0030B0" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter Property="Background" Value="#FF6195D3" />
+                                    <Setter Property="Foreground" Value="White" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         <ImageBrush x:Key="ButtonImage" ImageSource="Resources/9308.png" Stretch="Uniform"/>
         <Style TargetType="Button" x:Key="ButtonStyled">
             <Setter Property="Background" Value="{StaticResource ButtonImage}"></Setter>
@@ -74,7 +111,7 @@
                                         </Grid.ColumnDefinitions>
                                         <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" />
                                         <Label Grid.Row="0" Grid.Column="1" Content="{Binding ProgressText}" Width="Auto" Height="Auto"  HorizontalAlignment="Right" FontWeight="Bold"/>
-                                        <ProgressBar Grid.Row="1"   Grid.ColumnSpan="2" Height="15" Width="350" Minimum="0" Maximum="100"  Value="{Binding Progress}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                        <ProgressBar Grid.Row="1"  Grid.ColumnSpan="2" Height="8" Width="350" Minimum="0" Maximum="100"  Value="{Binding Progress}" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{Binding TransferStatus}" BorderBrush="{x:Null}"/>
                                         <Label Grid.Row="2"   Grid.ColumnSpan="2" Content="{Binding Label_time}" Width="300" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top" HorizontalContentAlignment="Center" />
 
                                 </Grid>
@@ -85,7 +122,7 @@
                     <GridViewColumn Width="80" Header="Stop Button">
                         <GridViewColumn.CellTemplate >
                             <DataTemplate>
-                                <Button Style="{StaticResource ButtonStyled}" IsEnabled="{Binding TransferStatus}" Click="Button_Click" Width="25" Height="30" Margin="20,20,20,20" Foreground="{x:Null}" BorderBrush="{x:Null}" >
+                                <Button Style="{StaticResource ButtonStyled}"  Click="Button_Click" Width="25" Height="30" Margin="20,20,20,20" Foreground="{x:Null}" BorderBrush="{x:Null}" >
                                
                                </Button>
                             </DataTemplate>
