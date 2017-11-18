@@ -5,8 +5,46 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Impostazioni Condivisione LAN" Icon="C:\icons\shareIcon.ico" Height="387" Width="564" ShowInTaskbar="False" Opacity="0.99" WindowStyle="ThreeDBorderWindow" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" ResizeMode="NoResize">
-    <Grid Margin="30,30,22,0" Height="107" VerticalAlignment="Top">
+        Title="Impostazioni Condivisione LAN"  Height="401" Width="593" ShowInTaskbar="False" Opacity="0.99" WindowStyle="ThreeDBorderWindow" Background="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" ResizeMode="NoResize">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#FF2B6FFF" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border CornerRadius="4" Background="{TemplateBinding Background}">
+                            <Grid>
+                                <Path x:Name="PathIcon" Width="15" Height="25" Stretch="Fill" Fill="#4C87B3" HorizontalAlignment="Left" Margin="17,0,0,0" />
+                                <ContentPresenter x:Name="MyContentPresenter" Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,0,0,0" />
+                            </Grid>
+                        </Border>
+
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FF38AEFF" />
+                                <Setter Property="Foreground" Value="White" />
+                                <Setter TargetName="PathIcon" Property="Fill" Value="Black" />
+                            </Trigger>
+
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="#FF0030B0" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="#FF6195D3" />
+                                <Setter Property="Foreground" Value="White" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="30,20,22,0" Height="107" VerticalAlignment="Top">
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="145*" />
@@ -17,31 +55,34 @@
         </Grid.RowDefinitions>
 
         <Label  Grid.Column="1" Margin="28,0,10,71" VerticalAlignment="Bottom" Height="26">Name:</Label>
-        <Ellipse Name="imageShape" MouseDown="btnBrowse_Click" Grid.Column="0" HorizontalAlignment="Right" Width="110" Margin="0,2,18,0" >
+        <Ellipse Name="imageShape"  Grid.Column="0" HorizontalAlignment="Right" Width="110" Margin="0,2,18,0" >
             <Ellipse.Fill >
                 <ImageBrush/>
             </Ellipse.Fill>
         </Ellipse>
-        <Button x:Name="ok_button" Click="ok_button_Click" Content="OK" Grid.Column="1" Height="33" Margin="279,267,10,-193" VerticalAlignment="Top"/>
-        <Button x:Name="ignore_button" Click="ignore_button_Click" Content="Annulla" Grid.Column="1" Height="33" Margin="185,267,0,-193" VerticalAlignment="Top" HorizontalAlignment="Left" Width="71"/>
-        <Button x:Name="reset_button" Click="reset_button_Click" Content="Reset configurazione" HorizontalAlignment="Left" Height="33" Margin="5,267,0,-193" VerticalAlignment="Top" Width="120"/>
+        <Button x:Name="ok_button"   Click="ok_button_Click" Content="OK" Grid.Column="1" Margin="312,290,13,-213" Height="30" VerticalAlignment="Top"/>
+        <Button x:Name="ignore_button" Click="ignore_button_Click" Content="Annulla" Grid.Column="1" Height="30" Margin="207,290,0,-213" VerticalAlignment="Top" HorizontalAlignment="Left" Width="81"/>
+        <Button x:Name="reset_button" Click="reset_button_Click" Content="Reset configurazione" HorizontalAlignment="Left" Height="30" Margin="0,290,0,-213" VerticalAlignment="Top" Width="140"/>
 
-        <Grid HorizontalAlignment="Left" Height="115" Margin="5,115,0,-123" VerticalAlignment="Top" Width="480" Grid.ColumnSpan="2">
+        <Grid HorizontalAlignment="Left" Height="125" Margin="5,120,0,-138" VerticalAlignment="Top" Width="480" Grid.ColumnSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="3*" />
-                <RowDefinition Height="3*" />
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="7*" />
+                <RowDefinition Height="10*" />
 
             </Grid.RowDefinitions>
 
-            <CheckBox x:Name="checkBox" Grid.Row="0" FlowDirection="RightToLeft" Margin="0,12,250,11" >
-                <TextBlock FlowDirection="LeftToRight" Text="Accettare automaticamente tutti i file "  />
+            <CheckBox x:Name="checkBox" Grid.Row="0" FlowDirection="RightToLeft" Margin="0,12,0,0" HorizontalAlignment="Left" Width="340" >
+                <TextBlock FlowDirection="LeftToRight" Text="Accettare automaticamente tutti i file ricevuti?" FontFamily="Segoe UI Semibold" Width="315" HorizontalAlignment="Left" VerticalAlignment="Top"  />
             </CheckBox>
-            <CheckBox x:Name="checkBox2" Grid.Row="1"  FlowDirection="RightToLeft" Height="28" VerticalAlignment="Top" Margin="0,6,250,0" >
-                <TextBlock FlowDirection="LeftToRight" Text="Utilizza percorso di default " Width="200" />
+            <CheckBox x:Name="checkBox2" Click ="checkBox2_Click" Grid.Row="1"  FlowDirection="RightToLeft" Height="28" VerticalAlignment="Top" Margin="0,12,0,0" HorizontalAlignment="Left" Grid.RowSpan="2" Width="340" >
+                <TextBlock FlowDirection="LeftToRight" Text="Utilizzare percorso di default per il salvataggio dei file?" Width="315" FontFamily="Segoe UI Semibold" HorizontalAlignment="Left" />
             </CheckBox>
-            <Button x:Name="button_directory_path" Content="Percorso Directory" Click="open_directory_path" Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="0,0,360,0" Height="33" VerticalAlignment="Bottom" />
-            <TextBox x:Name="textBox" TextWrapping="Wrap" Text=""  Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="165,6,0,0" />
+            <Button x:Name="button_directory_path" Content="Percorso Directory" Click="open_directory_path" Grid.Row="2" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Margin="-5,0,345,5" Height="30" VerticalAlignment="Bottom" />
+            <TextBlock x:Name="textBox" TextWrapping="WrapWithOverflow" IsEnabled="{Binding ElementName=checkBox2, Path=IsChecked}" Grid.Row="2"  Margin="155,0,-35,-25" Height="60" VerticalAlignment="Bottom" >
+
+
+            </TextBlock>
 
 
         </Grid>

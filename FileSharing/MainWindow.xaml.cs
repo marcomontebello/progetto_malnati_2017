@@ -98,7 +98,7 @@ namespace FileSharing
                     packet_content = (Message.Udp_message)bf.Deserialize(ms);
                     //System.Console.WriteLine(packet_content.name+" "+packet_content.image.Size);
                     // var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
-                    Application.Current.Dispatcher.InvokeAsync(() =>
+                                        _uiDispatcher.Invoke(new Action(() =>
                     {
                         ImageBrush ib = new ImageBrush();
 
@@ -153,7 +153,7 @@ namespace FileSharing
                             }
                         }
                         //Do something here.
-                    });
+                    }));
                 }
 
                 catch (SocketException ex) {

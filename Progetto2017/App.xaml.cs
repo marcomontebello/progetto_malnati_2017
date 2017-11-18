@@ -7,7 +7,20 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.ComponentModel;
 using System.Windows.Interop;
-
+using System.Windows.Threading;
+using System.Net.Sockets;
+using System.Net;
+using System.Text;
+using System.IO;
+using System.IO.Compression;
+using System.Threading;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using WPFNotification.Services;
+using WPFNotification.Model;
 
 namespace Progetto2017
 {
@@ -20,12 +33,17 @@ namespace Progetto2017
           private System.Windows.Forms.NotifyIcon _notifyIcon;
           private bool _isExit;
 
-          protected override void OnStartup(StartupEventArgs e)
+
+
+        protected override void OnStartup(StartupEventArgs e)
             {
             //creazione taskbar icon
                 base.OnStartup(e);
-                MainWindow =  new MainWindow();
-                MainWindow.Closing += MainWindow_Closing;
+            //nuovo codice
+            
+            MainWindow =  new MainWindow();
+
+            MainWindow.Closing += MainWindow_Closing;
                 Popup _popupWindow = new Popup();
 
             _notifyIcon = new System.Windows.Forms.NotifyIcon();
@@ -35,7 +53,8 @@ namespace Progetto2017
             _notifyIcon.Visible = true;
 
 
-            string menuCommand = string.Format("\"{0}\" \"%1%2%3%4%5\"", "C:\\Users\\Marco Montebello\\Documents\\Visual Studio 2015\\Projects\\Progetto2017\\FileSharing\\bin\\Debug\\FileSharing.exe");
+
+            string menuCommand = string.Format("\"{0}\" \"%L\"", "C:\\Users\\Graziano\\Source\\Repos\\progetto_malnati_2017\\FileSharing\\bin\\Debug\\FileSharing.exe");
 
             //Creazione entry context menu per le cartelle
             FileShellExtension.Register("Folder","LANsharing","Condividi in LAN", menuCommand);
@@ -47,8 +66,12 @@ namespace Progetto2017
 
         }
 
+
+        
         private void click_on_notifyIcon(Popup pw)
         {
+
+           
             if (pw.IsVisible) {
 
                 pw.Hide();
@@ -101,5 +124,6 @@ namespace Progetto2017
                 }
             }
 
+       
     }
 }

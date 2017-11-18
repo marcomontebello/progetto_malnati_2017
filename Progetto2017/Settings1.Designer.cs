@@ -49,13 +49,25 @@ namespace Progetto2017 {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:/")]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string defaultPath {
             get {
                 return ((string)(this["defaultPath"]));
             }
             set {
                 this["defaultPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool isPrivate {
+            get {
+                return ((bool)(this["isPrivate"]));
+            }
+            set {
+                this["isPrivate"] = value;
             }
         }
     }

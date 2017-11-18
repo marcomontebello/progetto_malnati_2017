@@ -19,34 +19,39 @@ namespace Progetto2017
     /// </summary>
     public partial class Popup : Window
     {
+        //mystaticbool true if private access
+        public static bool isOnline { get; set; }
         public Popup()
 
         {
             InitializeComponent();
             Left = System.Windows.SystemParameters.WorkArea.Width - Width - 70;
             Top = System.Windows.SystemParameters.WorkArea.Height - Height;
-
+            isOnline = Settings1.Default.isPrivate;
+            if (isOnline)
+                button1.Content = "Stato: \nOffline";
+            else
+                button1.Content = "Stato: \nOnline";
         }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-      
+
         }
 
         private void button1_Click(object sender, RoutedEventArgs e)
         {
-
+            isOnline = !isOnline;
+            Settings1.Default.isPrivate = isOnline;
+            Settings1.Default.Save();
             if (button1.Content.Equals("Stato: \nOnline"))
             {
                 button1.Content = "Stato: \nOffline";
             }
             else
+            {
                 button1.Content = "Stato: \nOnline";
-        }
-
-        private void textBlock_Click(object sender, RoutedEventArgs e)
-        {
-
+            }
         }
     }
 }

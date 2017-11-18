@@ -21,6 +21,7 @@ namespace FileSharing
         int time_left { get; set; } 
         string label_time { get; set; }
         string transfer_status { get; set; }
+        bool annullable { get; set; }
 
         public DateTime Timestamp
         {
@@ -38,6 +39,17 @@ namespace FileSharing
                 this.NotifyPropertyChanged("Time_left");
             }
         }
+
+        public bool Annullable
+        {
+            get { return annullable; }
+            set
+            {
+                annullable = value;
+                this.NotifyPropertyChanged("Annullable");
+            }
+        }
+
 
         public string TransferStatus
         {

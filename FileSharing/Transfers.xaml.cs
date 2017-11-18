@@ -41,6 +41,7 @@ namespace FileSharing
             get { return (String)GetValue(Transfers.TitleProperty); }
             set
             {
+                filename = value;
                 SetValue(Transfers.TitleProperty, value);
             }
 
@@ -93,6 +94,7 @@ namespace FileSharing
                 {
              
                     user.Progress = 0;
+                    user.Annullable = false;
                     System.Console.WriteLine("user:" + user.Name);
                     System.Console.WriteLine("user progress:" + user.Progress);
 
@@ -126,6 +128,7 @@ namespace FileSharing
         public void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             User user = e.Argument as User;
+
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
 
@@ -151,7 +154,7 @@ namespace FileSharing
 
             
 
-                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\n";
+                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\n";
                 header = new byte[bufferSize];
                 Array.Copy(Encoding.ASCII.GetBytes(headerStr), header, Encoding.ASCII.GetBytes(headerStr).Length);
 
@@ -164,7 +167,7 @@ namespace FileSharing
 
                 for (int i = 0; i < bufferCount; i++)
                 {
-
+                    
                     buffer = new byte[bufferSize];
                     int size = fs.Read(buffer, 0, bufferSize);
 
@@ -173,6 +176,7 @@ namespace FileSharing
 
                     percentage = (double)(((i + 1) * bufferSize))/(double)fs.Length;
                     tcpClient.Client.Send(buffer, size, SocketFlags.Partial);
+                    user.Annullable = true;
                     System.Console.WriteLine(percentage);
                     TimeSpan elapsedTime = DateTime.Now - started;
                     TimeSpan estimatedTime =
@@ -186,13 +190,37 @@ namespace FileSharing
 
                     if ((sender as BackgroundWorker).CancellationPending)
                     {
-                        e.Cancel = true;
-                        percentage = 0;
-                        user.Label_time = "Trasferimento annullato";
-                        user.TransferStatus = "#FFB80202";
-                        (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
-                        tcpClient.Close();
-                        return;
+
+                        string msg = "Vuoi veramente annullare?";
+                        MessageBoxResult result =
+                          MessageBox.Show(
+                            msg,
+                            "Attenzione",
+                            MessageBoxButton.OKCancel,
+                            MessageBoxImage.Question);
+
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            // If user doesn't want to close, cancel closure
+
+                            tcpClient.Close();
+                            e.Cancel = true;
+                            percentage = 0;
+                            user.Label_time = "Trasferimento annullato";
+                            user.TransferStatus = "#FFB80202";
+                            user.Annullable = false;
+                            (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
+                            return;
+
+                        }
+
+                       else
+                        {
+                           
+                            e.Cancel = false;
+
+                        }
+                        
                     }
 
                 }
@@ -219,7 +247,8 @@ namespace FileSharing
             {
                 double percentage = 0;
                 user.Label_time = "Errore durante il trasferimento";
-                user.TransferStatus = "#FFB80202"; 
+                user.TransferStatus = "#FFB80202";
+                user.Annullable = false;
                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                 e.Result = user;
                 throw;

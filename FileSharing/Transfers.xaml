@@ -122,7 +122,7 @@
                     <GridViewColumn Width="80" Header="Stop Button">
                         <GridViewColumn.CellTemplate >
                             <DataTemplate>
-                                <Button Style="{StaticResource ButtonStyled}"  Click="Button_Click" Width="25" Height="30" Margin="20,20,20,20" Foreground="{x:Null}" BorderBrush="{x:Null}" >
+                                <Button Style="{StaticResource ButtonStyled}"  Click="Button_Click" Width="25" Height="30" Margin="20,20,20,20" Foreground="{x:Null}" IsEnabled="{Binding Annullable}" BorderBrush="{x:Null}" >
                                
                                </Button>
                             </DataTemplate>

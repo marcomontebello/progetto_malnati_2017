@@ -73,7 +73,7 @@
                     <DropShadowEffect/>
                 </Button.Effect>
             </Button>
-            <Button x:Name="textBlock" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" Click="textBlock_Click" BorderBrush="{x:Null}">
+            <Button x:Name="textBlock" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" BorderBrush="{x:Null}">
                 <Button.Effect>
                     <DropShadowEffect/>
                 </Button.Effect>
