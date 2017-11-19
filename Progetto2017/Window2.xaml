@@ -5,10 +5,52 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Window2" Height="300" Width="300">
-    <Grid>
-        <Button x:Name="button" Content="Annulla" HorizontalAlignment="Left" Margin="103,154,0,0" VerticalAlignment="Top" Width="75" Height="26"/>
-        <Button x:Name="button1" Content="OK" HorizontalAlignment="Left" Margin="206,154,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.021,-0.132" Height="25" />
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Vuoi accettare il file?" VerticalAlignment="Top" Margin="22,40,0,0" Width="159" Height="24"/>
-    </Grid>
+        Title="Window2" Height="180" Width="315" Background="Transparent" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" >
+
+    <Window.Resources>
+
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="ButtonBorder" BorderThickness="0"  Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF6EB9F7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+    </Window.Resources>
+
+
+
+
+
+    <Border CornerRadius="15" Margin="0,5,10,10" Background="White"
+            
+            >
+        <Border.Effect>
+            <DropShadowEffect/>
+        </Border.Effect>
+        <Grid Margin="5,10,10,5" Background="White">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="button" Content="No" Margin="0,0,120,20" Height="31" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="70" Grid.ColumnSpan="2"/>
+            <Button x:Name="button1" Content="Si" Margin="0,0,15,20" RenderTransformOrigin="0.021,-0.132" HorizontalAlignment="Right" Width="70" Height="30" VerticalAlignment="Bottom" Grid.Column="1" />
+            <TextBlock x:Name="textBlock" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="80,10,0,0" Width="205" Height="75" FontFamily="Segoe" FontSize="12" Grid.ColumnSpan="2"><Run/><LineBreak/><Run/><LineBreak/><Run/></TextBlock>
+            <Image x:Name="image" HorizontalAlignment="Left" Height="70" Margin="5,25,0,0" VerticalAlignment="Top" Width="65" Source="Resources/Docs-icon.png"/>
+        </Grid>
+    </Border>
+
 </Window>

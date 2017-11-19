@@ -297,6 +297,7 @@ namespace Progetto2017
                 Console.WriteLine("Non salva automaticamente, chiedere se accettare");
                 fileAcceptWindow.textBlock.Text = "Vuoi accettare il file "+filename+" (dim: "+filesize+" B) da "+userSender+"?";
                 fileAcceptWindow.Show();
+                fileAcceptWindow.Topmost = true;
                 //CLICK OK
                 fileAcceptWindow.button1.Click += (s, args) =>
                 {
@@ -330,10 +331,12 @@ namespace Progetto2017
                 Window1 filePathWindow = new Window1();
                 filePathWindow.textBlock.Text = "Inserisci la cartella di destinazione per il file: "+filename+" ricevuto da "+userSender;
                 filePathWindow.Show();
+                filePathWindow.Topmost = true;
+
                 //cLICK OK
                 filePathWindow.button1.Click += (s, args) =>
                 {
-                    selectedPathFile = filePathWindow.textBox2.Content.ToString();
+                    selectedPathFile = filePathWindow.textBox2.Text.ToString();
                     Console.WriteLine("PERCORSOOOOOOO: {0}", selectedPathFile);
                     filePathWindow.Close();
                     oSignalEvent.Set();

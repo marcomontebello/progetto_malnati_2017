@@ -218,6 +218,8 @@
     <Resource Include="Resources\icons8-Impostazioni-96.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Resources\Docs-icon.png" />
+    <Resource Include="Resources\opened_folder1600.png" />
     <Content Include="Resources\user_profile_male.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

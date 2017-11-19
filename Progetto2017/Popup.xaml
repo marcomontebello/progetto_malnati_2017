@@ -5,17 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Popup" ResizeMode="NoResize" Height="144.975" Width="235" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="0.8" OpacityMask="Black" Background="Transparent" AllowsTransparency="True" WindowStyle="None">
+        Title="Popup" ResizeMode="NoResize" Height="144.975" Width="235" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="1" OpacityMask="Black" Background="Transparent" AllowsTransparency="True" WindowStyle="None">
 
 
     <Window.Resources>
 
 
-        <Style TargetType="{x:Type Button}">
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Name="ButtonBorder" BorderThickness="0"  Background="{TemplateBinding Background}" CornerRadius="8">
+                        <Border Name="ButtonBorder" BorderThickness="0"  Background="{TemplateBinding Background}" CornerRadius="10">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
@@ -24,8 +24,9 @@
             
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#FF6EB9F7"/>
-                    </Trigger>
+                        <Setter Property="Background" Value="#FF6ECBF7"/>
+                    <Setter Property="Foreground" Value="Aquamarine"/>
+                </Trigger>
                 </Style.Triggers>
             </Style>
 
@@ -52,7 +53,7 @@
                 <ColumnDefinition Width="0"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="button" Content="" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="28" Height="28" Margin="0,0,-32,18" BorderThickness="0" RenderTransformOrigin="0.5,0.5" Click="button_Click" Grid.Column="5" IsDefault="True" AutomationProperties.HelpText="Exit service" >
+            <Button x:Name="button" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="28" Height="28" Margin="0,0,-32,18" BorderThickness="0" RenderTransformOrigin="0.5,0.5" Click="button_Click" Grid.Column="5" IsDefault="True" AutomationProperties.HelpText="Exit service" >
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -68,12 +69,12 @@
                     <DropShadowEffect/>
                 </Button.Effect>
             </Button>
-            <Button x:Name="button1"  HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: &#xa;Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
+            <Button x:Name="button1"  Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: &#xa;Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
                 <Button.Effect>
                     <DropShadowEffect/>
                 </Button.Effect>
             </Button>
-            <Button x:Name="textBlock" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" BorderBrush="{x:Null}">
+            <Button x:Name="textBlock" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" BorderBrush="{x:Null}">
                 <Button.Effect>
                     <DropShadowEffect/>
                 </Button.Effect>

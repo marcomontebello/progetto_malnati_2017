@@ -165,6 +165,9 @@ namespace FileSharing
                 DateTime started = DateTime.Now;
 
 
+
+         
+
                 for (int i = 0; i < bufferCount; i++)
                 {
                     
@@ -184,22 +187,26 @@ namespace FileSharing
                                 (fs.Length - ((i + 1) * bufferSize)) /
                                 ((double)((i + 1) * bufferSize) / elapsedTime.TotalSeconds));
                     user.Label_time = Convert.ToInt32((estimatedTime.TotalSeconds)).ToString();
-                    (sender as BackgroundWorker).ReportProgress((int)(percentage*100),user);
+
+                    if(i==0)
+                        (sender as BackgroundWorker).ReportProgress((int)(0), user);
+                    else
+                        (sender as BackgroundWorker).ReportProgress((int)(percentage*100),user);
                     filesize -= size;
                     Thread.Sleep(10);
 
-                    if ((sender as BackgroundWorker).CancellationPending)
+                    if ((sender as BackgroundWorker).CancellationPending==true)
                     {
 
-                        string msg = "Vuoi veramente annullare?";
+                        string msg = "Hai annullato il trasferimento.";
                         MessageBoxResult result =
                           MessageBox.Show(
                             msg,
                             "Attenzione",
-                            MessageBoxButton.OKCancel,
-                            MessageBoxImage.Question);
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Exclamation);
 
-                        if (result == MessageBoxResult.Yes)
+                        if (result == MessageBoxResult.OK)
                         {
                             // If user doesn't want to close, cancel closure
 
@@ -214,12 +221,6 @@ namespace FileSharing
 
                         }
 
-                       else
-                        {
-                           
-                            e.Cancel = false;
-
-                        }
                         
                     }
 
@@ -230,8 +231,9 @@ namespace FileSharing
                 ///////////////////////////////////////////////////////////
                 Console.WriteLine("File " + send_path + " inviato a " + ipAddr);
 
-                tcpClient.Client.Close();
                 fs.Close();
+                tcpClient.Client.Close();
+
                 FileAttributes attr = File.GetAttributes(send_path);
 
 
@@ -294,6 +296,7 @@ namespace FileSharing
             else
             {
                 User user = e.Result as User;
+                user.Annullable = false;
                 user.Label_time = "Trasferimento concluso con successo";
             }
 

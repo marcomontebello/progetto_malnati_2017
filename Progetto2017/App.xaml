@@ -4,14 +4,6 @@
              xmlns:local="clr-namespace:Progetto2017">
     <Application.Resources>
 
-
-            <ResourceDictionary>
-                <ResourceDictionary.MergedDictionaries>
-                    <ResourceDictionary Source="/WPFNotification;component/Assets/NotificationUI.xaml" />
-                    <ResourceDictionary Source="MailNotificationUI.xaml" />
-                </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-
-        </Application.Resources>
+    </Application.Resources>
 
 </Application>

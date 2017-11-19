@@ -5,13 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Window1" Height="334.455" Width="564.501">
-    <Grid>
-        <Button x:Name="button" Content="Annulla" HorizontalAlignment="Left" Margin="332,216,0,0" VerticalAlignment="Top" Width="75" Height="26"/>
-        <Button x:Name="button1" Content="OK" IsEnabled="False" HorizontalAlignment="Left" Margin="435,216,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.021,-0.132" Height="25"/>
-        <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="Wrap" Text="Inserisci la cartella di destinazione" VerticalAlignment="Top" Margin="22,40,0,0" Width="228" Height="23"/>
-        <Button x:Name="button_directory_path" Content="Percorso Directory" Click="button_directory_path_Click" Margin="30,0,408.4,133.8" Height="33" VerticalAlignment="Bottom" />
-        <Label x:Name="textBox2"   Margin="198,138,45.4,133.8" />
+        Title="Window1" Height="190" Width="324.984" WindowStyle="None" AllowsTransparency="True" Background="Transparent" ShowInTaskbar="False">
 
-    </Grid>
+    <Window.Resources>
+
+
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="ButtonBorder" BorderThickness="0"  Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#FF6EB9F7"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+
+    </Window.Resources>
+
+
+
+
+
+    <Border CornerRadius="15" Margin="0,5,10,10" Background="White"
+            
+            >
+        <Border.Effect>
+            <DropShadowEffect/>
+        </Border.Effect>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="45*"/>
+                <ColumnDefinition Width="23*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="button" Content="Annulla" Margin="0,0,10,15" HorizontalAlignment="Right" Width="75" Height="26" VerticalAlignment="Bottom"/>
+            <Button x:Name="button1" Content="OK" IsEnabled="False" Margin="0,0,25,15" RenderTransformOrigin="0.021,-0.132" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1"/>
+            <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Margin="20,15,0,0" Width="273" Height="35" Grid.ColumnSpan="2"><Run/><LineBreak/><Run/></TextBlock>
+
+            <Button x:Name="button_directory_path"  Click="button_directory_path_Click" Margin="20,77,0,0" Height="28" VerticalAlignment="Top" HorizontalAlignment="Left" Width="30" Cursor="Hand" BorderThickness="0" >
+                <Image x:Name="image" Source="Resources/opened_folder1600.png" HorizontalAlignment="Left" Height="28" VerticalAlignment="Top" Width="25" Margin="0,0,0,0">
+
+                </Image>
+            </Button>
+            <TextBlock x:Name="textBox2"   Margin="0,55,20,45" Height="75" VerticalAlignment="Center" TextWrapping="WrapWithOverflow"  HorizontalAlignment="Right" Width="215" Grid.ColumnSpan="2"  />
+
+        </Grid>
+    </Border>
+
+
+
 </Window>

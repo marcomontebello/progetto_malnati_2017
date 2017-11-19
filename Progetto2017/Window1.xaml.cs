@@ -31,7 +31,7 @@ namespace Progetto2017
             FolderBrowserDialog fdb = new FolderBrowserDialog();
             if (fdb.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                textBox2.Content = fdb.SelectedPath;
+                textBox2.Text = fdb.SelectedPath;
                 button1.IsEnabled = true;
             }
         }

@@ -43,6 +43,7 @@ namespace Progetto2017
             
             MainWindow =  new MainWindow();
 
+
             MainWindow.Closing += MainWindow_Closing;
                 Popup _popupWindow = new Popup();
 
@@ -54,7 +55,7 @@ namespace Progetto2017
 
 
 
-            string menuCommand = string.Format("\"{0}\" \"%L\"", "C:\\Users\\Graziano\\Source\\Repos\\progetto_malnati_2017\\FileSharing\\bin\\Debug\\FileSharing.exe");
+            string menuCommand = string.Format("\"{0}\" \"%L\"", System.IO.Path.GetFullPath("..\\..\\..\\FileSharing\\bin\\Debug\\FileSharing.exe"));
 
             //Creazione entry context menu per le cartelle
             FileShellExtension.Register("Folder","LANsharing","Condividi in LAN", menuCommand);
