@@ -131,6 +131,7 @@ namespace FileSharing
 
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
+            string responseString=null;
 
             try
             {
@@ -139,12 +140,10 @@ namespace FileSharing
                 var timer = new System.Timers.Timer(1000D);
                 var snapshots = new Queue<long>(30);
 
-                int bufferSize = 65536;
                 byte[] buffer = null;
                 byte[] header = null;
 
                 FileStream fs = new FileStream(this.send_path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                int bufferCount = Convert.ToInt32(Math.Ceiling((double)fs.Length / (double)bufferSize));
 
                 System.Console.WriteLine("ip to which send:" + ipAddr);
 
@@ -152,10 +151,12 @@ namespace FileSharing
                 tcpClient.SendTimeout = 600000;
                 tcpClient.ReceiveTimeout = 600000;
 
-            
 
                 string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\n";
-                header = new byte[bufferSize];
+
+                int HeaderbufferSize = Encoding.ASCII.GetBytes(headerStr).Length;
+
+                header = new byte[HeaderbufferSize];
                 Array.Copy(Encoding.ASCII.GetBytes(headerStr), header, Encoding.ASCII.GetBytes(headerStr).Length);
 
                 int filesize = Convert.ToInt32((double)fs.Length);
@@ -164,93 +165,138 @@ namespace FileSharing
 
                 DateTime started = DateTime.Now;
 
-
-
-         
-
-                for (int i = 0; i < bufferCount; i++)
+              
                 {
-                    
-                    buffer = new byte[bufferSize];
-                    int size = fs.Read(buffer, 0, bufferSize);
+                    // If user doesn't want to close, cancel closure
 
-                    if (i == (bufferCount - 1))
-                        percentage += ((double)filesize);
-
-                    percentage = (double)(((i + 1) * bufferSize))/(double)fs.Length;
-                    tcpClient.Client.Send(buffer, size, SocketFlags.Partial);
-                    user.Annullable = true;
-                    System.Console.WriteLine(percentage);
-                    TimeSpan elapsedTime = DateTime.Now - started;
-                    TimeSpan estimatedTime =
-                            TimeSpan.FromSeconds(
-                                (fs.Length - ((i + 1) * bufferSize)) /
-                                ((double)((i + 1) * bufferSize) / elapsedTime.TotalSeconds));
-                    user.Label_time = Convert.ToInt32((estimatedTime.TotalSeconds)).ToString();
-
-                    if(i==0)
-                        (sender as BackgroundWorker).ReportProgress((int)(0), user);
-                    else
-                        (sender as BackgroundWorker).ReportProgress((int)(percentage*100),user);
-                    filesize -= size;
-                    Thread.Sleep(10);
-
-                    if ((sender as BackgroundWorker).CancellationPending==true)
-                    {
-
-                        string msg = "Hai annullato il trasferimento.";
-                        MessageBoxResult result =
-                          MessageBox.Show(
-                            msg,
-                            "Attenzione",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Exclamation);
-
-                        if (result == MessageBoxResult.OK)
-                        {
-                            // If user doesn't want to close, cancel closure
-
-                            tcpClient.Close();
-                            e.Cancel = true;
-                            percentage = 0;
-                            user.Label_time = "Trasferimento annullato";
-                            user.TransferStatus = "#FFB80202";
-                            user.Annullable = false;
-                            (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
-                            return;
-
-                        }
-
-                        
-                    }
+                    // tcpClient.Close();
+                    //e.Cancel = false;
+                    percentage = 0;
+                    user.Label_time = "In attesa che il destinatario accetti il trasferimento...";
+                    //user.TransferStatus = "#FFB80202";
+                    user.Annullable = false;
+                    (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
 
                 }
 
-                ////////////////////////////
-                e.Result = user;
-                ///////////////////////////////////////////////////////////
-                Console.WriteLine("File " + send_path + " inviato a " + ipAddr);
 
-                fs.Close();
-                tcpClient.Client.Close();
+                //ottengo socket da tcpClient
+                Socket s = tcpClient.Client;
 
-                FileAttributes attr = File.GetAttributes(send_path);
+                byte[] response = new byte[10];
+                s.Receive(response);
+                responseString = Encoding.ASCII.GetString(response);
+                Console.WriteLine(responseString);
 
-
-                if (is_dir == true)
+                if (responseString.StartsWith("no"))
                 {
-                    File.Delete(send_path);
-                    Console.WriteLine("File " + send_path + " cancellato.");
+
+                    throw new Exception();
+                }
+
+                    if (responseString.StartsWith("ok"))
+                {
+                    int bufferSize = 65536;
+                    if (fs.Length < bufferSize)
+                        bufferSize =(int) fs.Length;
+
+                    int bufferCount = Convert.ToInt32(Math.Ceiling(((double)(fs.Length)) / ((double)(bufferSize))));
+
+                    for (int i = 0; i < bufferCount; i++)
+                    {
+
+                        buffer = new byte[bufferSize];
+                        int size = fs.Read(buffer, 0, bufferSize);
+
+                        if (i == (bufferCount - 1))
+                            percentage += ((double)filesize);
+
+                        percentage = (double)(((i + 1) * bufferSize)) / (double)fs.Length;
+                        tcpClient.Client.Send(buffer, size, SocketFlags.Partial);
+                        user.Annullable = true;
+                        System.Console.WriteLine(percentage);
+                        TimeSpan elapsedTime = DateTime.Now - started;
+                        TimeSpan estimatedTime =
+                                TimeSpan.FromSeconds(
+                                    (fs.Length - ((i + 1) * bufferSize)) /
+                                    ((double)((i + 1) * bufferSize) / elapsedTime.TotalSeconds));
+                        user.Label_time = Convert.ToInt32((estimatedTime.TotalSeconds)).ToString();
+
+                       
+                        (sender as BackgroundWorker).ReportProgress((int)(percentage * 100), user);
+                        filesize -= size;
+                        Thread.Sleep(10);
+
+                        if ((sender as BackgroundWorker).CancellationPending == true)
+                        {
+
+                            string msg = "Hai annullato il trasferimento.";
+                            MessageBoxResult result =
+                              MessageBox.Show(
+                                msg,
+                                "Attenzione",
+                                MessageBoxButton.OK,
+                                MessageBoxImage.Exclamation);
+
+                            if (result == MessageBoxResult.OK)
+                            {
+                                // If user doesn't want to close, cancel closure
+
+                                tcpClient.Close();
+                                e.Cancel = true;
+                                percentage = 0;
+                                user.Label_time = "Trasferimento annullato dal mittente";
+                                user.TransferStatus = "#FFB80202";
+                                user.Annullable = false;
+                                (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
+                                return;
+
+                            }
+
+
+                        }
+
+                    }
+
+                    ////////////////////////////
+                    e.Result = user;
+                    ///////////////////////////////////////////////////////////
+                    Console.WriteLine("File " + send_path + " inviato a " + ipAddr);
+
+                    fs.Close();
+                    tcpClient.Client.Close();
+
+                    FileAttributes attr = File.GetAttributes(send_path);
+
+
+                    if (is_dir == true)
+                    {
+                        File.Delete(send_path);
+                        Console.WriteLine("File " + send_path + " cancellato.");
+                    }
+
                 }
 
 
             }
             catch (Exception ex)
             {
+
                 double percentage = 0;
-                user.Label_time = "Errore durante il trasferimento";
                 user.TransferStatus = "#FFB80202";
                 user.Annullable = false;
+
+                if (responseString.StartsWith("no"))
+                {
+
+                    Console.WriteLine("GRAZIANO NON HA ACCETTATO CAZZO");
+                    // If user doesn't want to close, cancel closure
+                    user.Label_time = "Trasferimento non accettato dal destinatario";
+                }
+
+                else
+                  user.Label_time = "Errore di rete durante il trasferimento";
+              
                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                 e.Result = user;
                 throw;

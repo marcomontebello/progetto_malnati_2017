@@ -19,9 +19,7 @@ using System.Drawing.Drawing2D;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using WPFNotification.Services;
-using WPFNotification.Model;
-using WPFNotification.Core.Configuration;
+
 
 //using FileShellExtension;
 
@@ -91,6 +89,7 @@ namespace Progetto2017
                 byte[] buffer = null;
                 byte[] header = null;
                 string headerStr = "";
+            
                 string filename = "";
                 int filesize = 0;
             string userSender = "";
@@ -102,7 +101,6 @@ namespace Progetto2017
             {
 
                 socket.Receive(header);
-
                 headerStr = Encoding.ASCII.GetString(header);
 
 
@@ -133,10 +131,14 @@ namespace Progetto2017
                     if (!requestAccept(filename, filesize, userSender))
                     {
                         Console.WriteLine("trasferimento rifiutato");
+                        byte[] msg = Encoding.ASCII.GetBytes("no\r\n");
+
+                        socket.Send(msg);
+                        socket.Shutdown(SocketShutdown.Both);
                         socket.Close();
                         return;
                     }
-                    Console.WriteLine("trasferimento accettato");
+
                 }
 
                 //controllo default path
@@ -145,10 +147,15 @@ namespace Progetto2017
                     selectedPathFile = findPath(filename, filesize, userSender);
                     if (selectedPathFile == null)
                     {
+                        byte[] msg = Encoding.ASCII.GetBytes("no\r\n");
+
+                        socket.Send(msg);
+                        socket.Shutdown(SocketShutdown.Both);
                         socket.Close();
                         return;
                     }
                     Console.WriteLine("PERCORSO SELEZIONATO: {0}", selectedPathFile);
+                    
                 }
                 else
                 {
@@ -156,7 +163,9 @@ namespace Progetto2017
                     Console.WriteLine("PERCORSO DEFAULT: {0}", selectedPathFile);
                 }
 
-
+                Console.WriteLine("trasferimento accettato");
+                byte[] msg2 = Encoding.ASCII.GetBytes("ok\r\n");
+                socket.Send(msg2);
 
 
                 selectedPathFile = selectedPathFile.Replace("\\", "\\\\");
@@ -185,9 +194,9 @@ namespace Progetto2017
                     while (Directory.Exists(fullPathDir))
                     {
                         if (k == 1)
-                            nameDir = nameDir + " - Copia_" + k.ToString();
+                            nameDir = nameDir + "_" + k.ToString();
                         else
-                            nameDir = nameDir.Replace(" - Copia_" + (k - 1).ToString(), " - Copia_" + k.ToString());
+                            nameDir = nameDir.Replace("_" + (k - 1).ToString(), "_" + k.ToString());
                         fullPathDir = selectedPathFile + nameDir;
                         Console.WriteLine(Directory.Exists(fullPathDir) ? "Dir {0} exists." : "Dir {0} does not exist.", fullPathDir);
                         k++;
@@ -220,9 +229,9 @@ namespace Progetto2017
                     while(File.Exists(curFile))
                     {
                         if (i == 1)
-                            nameF = nameF + " - Copia_" + i.ToString();
+                            nameF = nameF + "_" + i.ToString();
                         else
-                            nameF = nameF.Replace(" - Copia_" + (i-1).ToString(), " - Copia_" + i.ToString());
+                            nameF = nameF.Replace("_" + (i-1).ToString(), "_" + i.ToString());
                         curFile = selectedPathFile + nameF + extFile;
                         Console.WriteLine(File.Exists(curFile) ? "File {0} exists." : "File {0} does not exist.", curFile);
                         i++;
@@ -259,6 +268,7 @@ namespace Progetto2017
             catch (Exception e)
             {
                 Console.WriteLine("ERRORE DURANTE IL TRASFERIMENTO GENERARE NOTIFICA");
+                socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
                 return;
             }
@@ -277,10 +287,12 @@ namespace Progetto2017
                 catch (Exception e)
                 {
                     Console.WriteLine(e.StackTrace);
+                    socket.Shutdown(SocketShutdown.Both);
                     socket.Close();
                     return;
                 }
             }
+            socket.Shutdown(SocketShutdown.Both);
             socket.Close();
             // }
         }
@@ -425,8 +437,8 @@ namespace Progetto2017
 
                                 //var RequestData = Encoding.ASCII.GetBytes(Settings1.Default.userName);
                                 Client.EnableBroadcast = true;
-                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
-                                //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("7.123.164.139"), 8889));
+                                //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
+                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("7.123.164.139"), 8889));
                                 //System.Console.WriteLine("n byte inviati {0} verso IP: {1} e porta: {2}", bytes.Length, IPAddress.Broadcast, 8889);
                                 //Client.Send(data, data.Length, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888));
 

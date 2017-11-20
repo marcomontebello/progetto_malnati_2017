@@ -55,7 +55,7 @@ namespace FileSharing
         {
             InitializeComponent();
            
-            this.Title = "Condividi il file " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
+            //this.Title = "Condividi il file " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
             userOnlineList.ItemsSource = onlineUsers;
             _uiDispatcher = Dispatcher.CurrentDispatcher;
             Task.Factory.StartNew(UDP_listening_PI1);
@@ -70,7 +70,7 @@ namespace FileSharing
             //
           listener.Client.ReceiveTimeout = 10000;
 
-            while (true)
+            while (listen)
             {
                 if (onlineUsers.Count == 0)
                     _uiDispatcher.Invoke(new Action(() =>
@@ -171,7 +171,10 @@ namespace FileSharing
 
                 }
 
+
             }
+
+            listener.Close();
         }
 
         private void update_list() {
@@ -261,10 +264,10 @@ namespace FileSharing
             try
             {
 
-                string send_path = args[1];
+                //string send_path = args[1];
 
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);
                 bool is_dir = false;
@@ -298,6 +301,7 @@ namespace FileSharing
 
                 Transfers transf_windows = new Transfers(selectedUsers, send_path, filename, is_dir);
                 transf_windows.Show();
+                listen = false;
 
             }
             catch (Exception e)
