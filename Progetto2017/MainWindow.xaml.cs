@@ -58,7 +58,7 @@ namespace Progetto2017
 
         public void TCP_receiver()
         {
-                TcpListener listener = new TcpListener(IPAddress.Any, 11000);
+            TcpListener listener = new TcpListener(IPAddress.Any, 11000);
             listener.Start();
             while (true)
             {
@@ -438,7 +438,7 @@ namespace Progetto2017
                                 //var RequestData = Encoding.ASCII.GetBytes(Settings1.Default.userName);
                                 Client.EnableBroadcast = true;
                                 //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
-                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("7.123.164.139"), 8889));
+                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
                                 //System.Console.WriteLine("n byte inviati {0} verso IP: {1} e porta: {2}", bytes.Length, IPAddress.Broadcast, 8889);
                                 //Client.Send(data, data.Length, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888));
 

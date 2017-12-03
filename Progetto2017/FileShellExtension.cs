@@ -4,6 +4,7 @@
 using System;
 using System.Diagnostics;
 using Microsoft.Win32;
+using System.IO;
 
 namespace Progetto2017
 
@@ -37,8 +38,9 @@ namespace Progetto2017
 			// add context menu to the registry
 			using (RegistryKey key = Registry.ClassesRoot.CreateSubKey(regPath))
 			{
-				key.SetValue(null, menuText);
-                key.SetValue("Icon", "C:\\icons\\shareIcon.ico");
+
+                key.SetValue(null, menuText);
+                key.SetValue("Icon", System.IO.Path.GetFullPath("..\\..\\Resources\\Myicon.ico"));
 			}
 			
 			// add command that is invoked to the registry

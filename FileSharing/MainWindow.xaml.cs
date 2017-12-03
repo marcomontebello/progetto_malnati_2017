@@ -55,7 +55,7 @@ namespace FileSharing
         {
             InitializeComponent();
            
-            //this.Title = "Condividi il file " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
+            this.Title = "Condividi il file " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
             userOnlineList.ItemsSource = onlineUsers;
             _uiDispatcher = Dispatcher.CurrentDispatcher;
             Task.Factory.StartNew(UDP_listening_PI1);
@@ -264,10 +264,10 @@ namespace FileSharing
             try
             {
 
-                //string send_path = args[1];
+                string send_path = args[1];
 
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);
                 bool is_dir = false;
