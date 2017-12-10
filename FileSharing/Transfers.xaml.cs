@@ -271,8 +271,10 @@ namespace FileSharing
 
                     if (is_dir == true)
                     {
-                        File.Delete(send_path);
-                        Console.WriteLine("File " + send_path + " cancellato.");
+                        if (Directory.Exists(send_path)) { 
+                            File.Delete(send_path);
+                            Console.WriteLine("File " + send_path + " cancellato.");
+                        }
                     }
 
                 }

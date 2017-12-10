@@ -291,7 +291,6 @@ namespace Progetto2017
                     // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Split('.').First() + "\\\\";
                     ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
-                    File.Delete(System.IO.Path.GetTempPath() + filename);
                     filename = filename.Split('.').First();
 
             }
@@ -324,6 +323,10 @@ namespace Progetto2017
                 Thread.Sleep(5000);
                 okWindow.Close();
             });
+
+            if(isDir)
+             File.Delete(System.IO.Path.GetTempPath() + filename);
+
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
         }
@@ -468,8 +471,8 @@ namespace Progetto2017
 
                                 //var RequestData = Encoding.ASCII.GetBytes(Settings1.Default.userName);
                                 Client.EnableBroadcast = true;
-                                //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
-                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("192.168.1.223"), 8889));
+                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
+                                //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("192.168.1.223"), 8889));
                                 //System.Console.WriteLine("n byte inviati {0} verso IP: {1} e porta: {2}", bytes.Length, IPAddress.Broadcast, 8889);
                                 //Client.Send(data, data.Length, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888));
 
@@ -479,7 +482,7 @@ namespace Progetto2017
                     }
                 }
 
-                Thread.Sleep(300);
+                Thread.Sleep(2000);
             }
 
             Client.Close();

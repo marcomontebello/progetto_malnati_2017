@@ -68,7 +68,7 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 1000;
+          listener.Client.ReceiveTimeout = 10000;
 
             while (listen)
             {
@@ -124,7 +124,7 @@ namespace FileSharing
 
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 1)
+                                if (diffInSeconds > 10)
                                 {
 
                                         _uiDispatcher.Invoke(new Action(() =>
@@ -184,7 +184,7 @@ namespace FileSharing
                 {
                     // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                    if (diffInSeconds >= 1)
+                    if (diffInSeconds >= 10)
                     {
                             _uiDispatcher.Invoke(new Action(() =>
                             {
