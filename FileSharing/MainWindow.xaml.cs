@@ -55,7 +55,7 @@ namespace FileSharing
         {
             InitializeComponent();
            
-            //this.Title = "Condividi il file " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
+            this.Title = "Condividi " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
             userOnlineList.ItemsSource = onlineUsers;
             _uiDispatcher = Dispatcher.CurrentDispatcher;
             Task.Factory.StartNew(UDP_listening_PI1);
@@ -68,7 +68,7 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 10000;
+          listener.Client.ReceiveTimeout = 2000;
 
             while (listen)
             {
@@ -98,24 +98,22 @@ namespace FileSharing
                     packet_content = (Message.Udp_message)bf.Deserialize(ms);
                     //System.Console.WriteLine(packet_content.name+" "+packet_content.image.Size);
                     // var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
-                                        _uiDispatcher.Invoke(new Action(() =>
+                    _uiDispatcher.Invoke(new Action(() =>
                     {
+
                         ImageBrush ib = new ImageBrush();
 
-                    ib.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(packet_content.image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
+                        ib.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(packet_content.image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
-                    User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image,ib);
+                        User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image,ib);
                         Console.WriteLine(act_user.Address);
 
                         if (!onlineUsers.Contains(act_user) && !act_user.Address.Equals(GetLocalIPAddress()))
                         {
-                            
-
+         
                                 onlineUsers.Add(act_user);
                                 button_invia.IsEnabled = true;
                                 label.Content = "Scegli con chi condividere:";
-
-                     
 
                             // System.Console.WriteLine("aggiunto elemento alla lista");
                         }
@@ -126,7 +124,7 @@ namespace FileSharing
 
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 10)
+                                if (diffInSeconds > 2)
                                 {
 
                                         _uiDispatcher.Invoke(new Action(() =>
@@ -186,7 +184,7 @@ namespace FileSharing
                 {
                     // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                    if (diffInSeconds >= 10)
+                    if (diffInSeconds >= 2)
                     {
                             _uiDispatcher.Invoke(new Action(() =>
                             {
@@ -264,10 +262,10 @@ namespace FileSharing
             try
             {
 
-                //string send_path = args[1];
+                string send_path = args[1];
 
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+               // string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
                 //string send_path = "C:\\Users\\GRAZIANO\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);

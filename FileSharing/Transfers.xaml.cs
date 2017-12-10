@@ -153,8 +153,8 @@ namespace FileSharing
                 tcpClient.ReceiveTimeout = 600000;
 
 
-                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\nIsDir:"+this.is_dir+"\r\n";
-
+                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\nIsDir:"+this.is_dir.ToString()+"\r\n";
+                Console.WriteLine(headerStr);
                 int HeaderbufferSize = Encoding.ASCII.GetBytes(headerStr).Length;
 
                 header = new byte[HeaderbufferSize];

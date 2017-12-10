@@ -97,6 +97,7 @@ namespace Progetto2017
                 //disattivazione menu contestuale per i file
                 FileShellExtension.Unregister("*", "LANsharing");
                 App.Current.Shutdown();
+                Environment.Exit(0);
 
         }
 
@@ -122,6 +123,7 @@ namespace Progetto2017
                 {
                     e.Cancel = true;
                     MainWindow.Hide(); // A hidden window can be shown again, a closed one not
+
                 }
             }
 

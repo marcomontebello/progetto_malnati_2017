@@ -95,7 +95,7 @@ namespace Progetto2017
             string userSender = "";
 
                 header = new byte[bufferSize];
-            bool isDirectory = false;
+            string isDirectory = "";
 
             try
             {
@@ -120,6 +120,12 @@ namespace Progetto2017
                 //Get filename from header
                 filename = headers["Filename"];
                 userSender = headers["User"];
+                isDirectory = headers["IsDir"];
+                bool isDir=false;
+                if(isDirectory.Equals("True"))
+                {
+                    isDir = true;
+                }
                 Console.WriteLine("filename "+filename);
                 Console.WriteLine("filesize "+filesize);
                 Console.WriteLine("Sender "+userSender);
@@ -174,11 +180,11 @@ namespace Progetto2017
                 Console.WriteLine("Percorso directory IMPOSTATO O SELEZIONATO: " + selectedPathFile);
             
 
-                if (filename.Split('.').Last().Equals("LAN_DIR"))
+                if (isDir)
                 {
                     Console.WriteLine("e' una directory");
-                    filename = filename.Replace(".LAN_DIR", ".zip");
-                    isDirectory = true;
+                    //filename = filename.Replace(".LAN_DIR", ".zip");
+                    filename = filename + ".zip";
 
                     Console.WriteLine("il nuovo file si chiama: {0}", filename);
                     string nameDir = Path.GetFileNameWithoutExtension(filename);
@@ -251,7 +257,7 @@ namespace Progetto2017
 
                 //controllo impostazioni di configurazione
                 FileStream fs;
-                if (!isDirectory) {
+                if (!isDir) {
 
                     fs = new FileStream(selectedPathFile + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
 
@@ -271,15 +277,8 @@ namespace Progetto2017
 
                 } 
                 fs.Close();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("ERRORE DURANTE IL TRASFERIMENTO GENERARE NOTIFICA");
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
-                return;
-            }
-            if (isDirectory)
+
+            if (isDir)
             {
                 Console.WriteLine("Sto estraendo {0} ", selectedPathFile + filename);
                 try
@@ -299,9 +298,25 @@ namespace Progetto2017
                     return;
                 }
             }
-            socket.Shutdown(SocketShutdown.Both);
-            socket.Close();
-            // }
+                _uiDispatcher.InvokeAsync(() =>
+                {
+                    Window3 okWindow = new Window3();
+                    okWindow.textBlock.Text = "Ricevuto " + filename + " da " + userSender + "!";
+                    okWindow.Show();
+                    Thread.Sleep(3000);
+                    okWindow.Close();
+                });
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+                // }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("ERRORE DURANTE IL TRASFERIMENTO GENERARE NOTIFICA");
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+                return;
+            }
         }
 
         private bool requestAccept(string filename, int filesize, string userSender)
@@ -314,7 +329,7 @@ namespace Progetto2017
                 //nuovo file in arrivo; accetti automaticamente? controllare gli ultimi setting salvati
 
                 Console.WriteLine("Non salva automaticamente, chiedere se accettare");
-                fileAcceptWindow.textBlock.Text = "Vuoi accettare il file "+filename+" (dim: "+filesize+" B) da "+userSender+"?";
+                fileAcceptWindow.textBlock.Text = "Vuoi accettare "+filename+" ("+filesize/1024+" KB) da "+userSender+"?";
                 fileAcceptWindow.Show();
                 fileAcceptWindow.Topmost = true;
                 //CLICK OK
@@ -348,7 +363,7 @@ namespace Progetto2017
             _uiDispatcher.InvokeAsync(() =>
             {
                 Window1 filePathWindow = new Window1();
-                filePathWindow.textBlock.Text = "Inserisci la cartella di destinazione per il file: "+filename+" ricevuto da "+userSender;
+                filePathWindow.textBlock.Text = "Inserisci la cartella di destinazione per "+filename+" ricevuto da "+userSender;
                 filePathWindow.Show();
                 filePathWindow.Topmost = true;
 
@@ -455,7 +470,7 @@ namespace Progetto2017
                     }
                 }
 
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
             }
 
             Client.Close();
