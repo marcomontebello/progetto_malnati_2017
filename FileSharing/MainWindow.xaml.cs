@@ -105,9 +105,9 @@ namespace FileSharing
                     ib.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(packet_content.image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                     User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image,ib);
+                        Console.WriteLine(act_user.Address);
 
-
-                        if (!onlineUsers.Contains(act_user) || !act_user.Address.Equals(GetLocalIPAddress()))
+                        if (!onlineUsers.Contains(act_user) && !act_user.Address.Equals(GetLocalIPAddress()))
                         {
                             
 
