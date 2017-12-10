@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Window3" Height="104.4" Width="261.4" Background="Transparent" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" >
+        Title="Window3" Height="110" Width="261.4" Background="Transparent" ResizeMode="NoResize" WindowStyle="None" AllowsTransparency="True" ShowInTaskbar="False" >
 
     <Window.Resources>
 
@@ -46,7 +46,7 @@
                 <ColumnDefinition/>
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
-            <TextBlock x:Name="textBlock"  TextWrapping="Wrap" Margin="80,10,5,10.8" FontFamily="Segoe" FontSize="12" Grid.ColumnSpan="2" TextAlignment="Center" Text="Errore durante il trasferimento:"/>
+            <TextBlock x:Name="textBlock"  TextWrapping="Wrap" Margin="80,10,5,10.8" FontFamily="Segoe" FontSize="12" Grid.ColumnSpan="2" TextAlignment="Center"/>
             <Image x:Name="image" HorizontalAlignment="Left" Margin="6,6,0,6" Width="65" Source="Resources/errorYT.png"/>
         </Grid>
     </Border>

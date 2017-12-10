@@ -96,11 +96,12 @@ namespace Progetto2017
 
                 header = new byte[bufferSize];
             string isDirectory = "";
+            bool isDir = false;
 
             try
             {
                 
-                socket.ReceiveTimeout = 10000;
+                socket.ReceiveTimeout = 5000;
                 socket.Receive(header);
                 headerStr = Encoding.ASCII.GetString(header);
 
@@ -121,7 +122,6 @@ namespace Progetto2017
                 filename = headers["Filename"];
                 userSender = headers["User"];
                 isDirectory = headers["IsDir"];
-                bool isDir=false;
                 if(isDirectory.Equals("True"))
                 {
                     isDir = true;
@@ -270,53 +270,62 @@ namespace Progetto2017
                     buffer = new byte[bufferSize];
 
                     int size = socket.Receive(buffer, SocketFlags.Partial);
-
+        if(size <= 0)
+                    {
+                        fs.Close();
+                        throw new Exception();
+                    }
                     fs.Write(buffer, 0, size);
 
                     filesize -= size;
 
-                } 
+                }
+
                 fs.Close();
 
             if (isDir)
             {
                 Console.WriteLine("Sto estraendo {0} ", selectedPathFile + filename);
-                try
-                {
+     
                     // provare con 
                     // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Split('.').First() + "\\\\";
                     ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
                     File.Delete(System.IO.Path.GetTempPath() + filename);
                     filename = filename.Split('.').First();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.StackTrace);
-                    socket.Shutdown(SocketShutdown.Both);
-                    socket.Close();
-                    return;
-                }
+
             }
-                _uiDispatcher.InvokeAsync(() =>
-                {
-                    Window3 okWindow = new Window3();
-                    okWindow.textBlock.Text = "Ricevuto " + filename + " da " + userSender + "!";
-                    okWindow.Show();
-                    Thread.Sleep(3000);
-                    okWindow.Close();
-                });
-                socket.Shutdown(SocketShutdown.Both);
-                socket.Close();
-                // }
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 Console.WriteLine("ERRORE DURANTE IL TRASFERIMENTO GENERARE NOTIFICA");
+                if((!isDir) && (File.Exists(selectedPathFile + filename)))
+                {
+                    File.Delete(selectedPathFile + filename);
+                }
+                _uiDispatcher.InvokeAsync(() =>
+                    {
+                        Window4 errWindow = new Window4();
+                        if (isDir)
+                            filename = filename.Split('.').First();
+
+                        errWindow.textBlock.Text = "Errore trasferimento: " + filename + " da " + userSender + " non ricevuto!";
+                        errWindow.Show();
+                        Thread.Sleep(5000);
+                        errWindow.Close();
+                    });
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
                 return;
             }
+            _uiDispatcher.InvokeAsync(() =>
+            {
+                Window3 okWindow = new Window3();
+                okWindow.textBlock.Text = "Ricevuto " + filename + " da " + userSender + "!";
+                okWindow.Show();
+                Thread.Sleep(5000);
+                okWindow.Close();
+            });
+            socket.Shutdown(SocketShutdown.Both);
+            socket.Close();
         }
 
         private bool requestAccept(string filename, int filesize, string userSender)
@@ -470,7 +479,7 @@ namespace Progetto2017
                     }
                 }
 
-                Thread.Sleep(500);
+                Thread.Sleep(300);
             }
 
             Client.Close();
