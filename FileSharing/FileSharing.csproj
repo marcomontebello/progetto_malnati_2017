@@ -37,7 +37,7 @@
   <ItemGroup>
     <Reference Include="Message, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Message\Message\bin\Debug\Message.dll</HintPath>
+      <HintPath>..\..\..\..\Downloads\Telegram Desktop\Message.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />

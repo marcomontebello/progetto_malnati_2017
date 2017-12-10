@@ -68,7 +68,7 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 10000;
+          listener.Client.ReceiveTimeout = 1000;
 
             while (listen)
             {
@@ -126,7 +126,7 @@ namespace FileSharing
 
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 10)
+                                if (diffInSeconds > 1)
                                 {
 
                                         _uiDispatcher.Invoke(new Action(() =>
@@ -186,7 +186,7 @@ namespace FileSharing
                 {
                     // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                    if (diffInSeconds >= 10)
+                    if (diffInSeconds >= 1)
                     {
                             _uiDispatcher.Invoke(new Action(() =>
                             {
@@ -267,7 +267,8 @@ namespace FileSharing
                 //string send_path = args[1];
 
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                string send_path = "C:\\Users\\GRAZIANO\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);
                 bool is_dir = false;
