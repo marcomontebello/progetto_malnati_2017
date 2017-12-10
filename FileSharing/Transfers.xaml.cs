@@ -41,6 +41,7 @@ namespace FileSharing
             get { return (String)GetValue(Transfers.TitleProperty); }
             set
             {
+               
                 filename = value;
                 SetValue(Transfers.TitleProperty, value);
             }
@@ -152,7 +153,7 @@ namespace FileSharing
                 tcpClient.ReceiveTimeout = 600000;
 
 
-                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\n";
+                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\nIsDir:"+this.is_dir+"\r\n";
 
                 int HeaderbufferSize = Encoding.ASCII.GetBytes(headerStr).Length;
 

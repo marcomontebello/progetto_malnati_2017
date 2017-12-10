@@ -277,7 +277,7 @@ namespace FileSharing
                 {
                  
                     is_dir = true;
-                    temp_path = System.IO.Path.GetTempPath()+ send_path.Split('\\').Last() + ".LAN_DIR";
+                    temp_path = System.IO.Path.GetTempPath()+ send_path.Split('\\').Last();
                     if (!(File.Exists(temp_path)))
                         //   ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\PROVA.LAN_DIR");
                         ZipFile.CreateFromDirectory(send_path,temp_path);
@@ -305,6 +305,7 @@ namespace FileSharing
                 listen = false;
 
             }
+
             catch (Exception e)
             {
 
