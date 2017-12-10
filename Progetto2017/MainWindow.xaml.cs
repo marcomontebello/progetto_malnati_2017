@@ -448,8 +448,9 @@ namespace Progetto2017
                     }
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
             }
+
             Client.Close();
         }
 

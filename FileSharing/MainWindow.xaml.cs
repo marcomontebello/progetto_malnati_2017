@@ -68,7 +68,7 @@ namespace FileSharing
             UdpClient listener = new UdpClient(8889);
             //var timeToWait = TimeSpan.FromSeconds(10);
             //
-          listener.Client.ReceiveTimeout = 1000;
+          listener.Client.ReceiveTimeout = 10000;
 
             while (listen)
             {
@@ -107,7 +107,7 @@ namespace FileSharing
                     User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image,ib);
 
 
-                        if (!onlineUsers.Contains(act_user))
+                        if (!onlineUsers.Contains(act_user) || !act_user.Address.Equals(GetLocalIPAddress()))
                         {
                             
 
@@ -126,7 +126,7 @@ namespace FileSharing
 
                                 // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                                 var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 1)
+                                if (diffInSeconds > 10)
                                 {
 
                                         _uiDispatcher.Invoke(new Action(() =>
@@ -147,7 +147,7 @@ namespace FileSharing
                                     {
                                         user.Timestamp = DateTime.Now;
                                         user.Image = packet_content.image;
-                                        //    System.Console.WriteLine("trovato elemento nella lista, non necessaria aggiunta");
+                                        //System.Console.WriteLine("trovato utente nella lista, non necessaria aggiunta");
                                     }
                                 }
                             }
@@ -186,7 +186,7 @@ namespace FileSharing
                 {
                     // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                    if (diffInSeconds >= 1)
+                    if (diffInSeconds >= 10)
                     {
                             _uiDispatcher.Invoke(new Action(() =>
                             {
@@ -267,8 +267,8 @@ namespace FileSharing
                 //string send_path = args[1];
 
                 //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
-                string send_path = "C:\\Users\\GRAZIANO\\Desktop\\ArchitectVideo_512kb.mp4";
+                string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
+                //string send_path = "C:\\Users\\GRAZIANO\\Desktop\\ArchitectVideo_512kb.mp4";
 
                 FileAttributes attr = File.GetAttributes(send_path);
                 bool is_dir = false;
@@ -311,6 +311,19 @@ namespace FileSharing
                 System.Console.WriteLine(e.StackTrace);
             }
 
+        }
+
+        public static string GetLocalIPAddress()
+        {
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    return ip.ToString();
+                }
+            }
+            throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }
 
