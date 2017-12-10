@@ -242,7 +242,6 @@ namespace FileSharing
                             if (result == MessageBoxResult.OK)
                             {
                                 // If user doesn't want to close, cancel closure
-
                                 tcpClient.Close();
                                 e.Cancel = true;
                                 percentage = 0;
