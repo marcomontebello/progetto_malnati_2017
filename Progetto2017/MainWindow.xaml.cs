@@ -62,7 +62,7 @@ namespace Progetto2017
             listener.Start();
             while (true)
             {
-
+                Console.WriteLine("TEMP PATH {0}", System.IO.Path.GetTempPath());
                 Socket newSocket = listener.AcceptSocket();
                 Thread t = new Thread(new ParameterizedThreadStart(TCP_receiver2));
                 t.Start(newSocket);
@@ -99,7 +99,8 @@ namespace Progetto2017
 
             try
             {
-
+                
+                socket.ReceiveTimeout = 10000;
                 socket.Receive(header);
                 headerStr = Encoding.ASCII.GetString(header);
 
@@ -249,9 +250,15 @@ namespace Progetto2017
                 int bufferCount = Convert.ToInt32(Math.Ceiling((double)filesize / (double)bufferSize));
 
                 //controllo impostazioni di configurazione
+                FileStream fs;
+                if (!isDirectory) {
 
+                    fs = new FileStream(selectedPathFile + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
 
-                FileStream fs = new FileStream(selectedPathFile + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                } else
+                {
+                    fs = new FileStream(System.IO.Path.GetTempPath() + filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.ReadWrite);
+                }
                 while (filesize > 0)
                 {
                     buffer = new byte[bufferSize];
@@ -280,8 +287,8 @@ namespace Progetto2017
                     // provare con 
                     // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Split('.').First() + "\\\\";
-                    ZipFile.ExtractToDirectory(selectedPathFile + filename, selectedPathFile + dir);
-                    File.Delete(selectedPathFile + filename);
+                    ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
+                    File.Delete(System.IO.Path.GetTempPath() + filename);
                     filename = filename.Split('.').First();
                 }
                 catch (Exception e)
@@ -438,7 +445,7 @@ namespace Progetto2017
                                 //var RequestData = Encoding.ASCII.GetBytes(Settings1.Default.userName);
                                 Client.EnableBroadcast = true;
                                 //Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
-                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Broadcast, 8889));
+                                Client.Send(bytes, bytes.Length, new IPEndPoint(IPAddress.Parse("192.168.1.223"), 8889));
                                 //System.Console.WriteLine("n byte inviati {0} verso IP: {1} e porta: {2}", bytes.Length, IPAddress.Broadcast, 8889);
                                 //Client.Send(data, data.Length, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8888));
 
