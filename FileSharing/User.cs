@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
-using System.Net;
-using System.Windows;
-using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
 namespace FileSharing
 {
@@ -21,7 +16,6 @@ namespace FileSharing
         int time_left { get; set; } 
         string label_time { get; set; }
         string transfer_status { get; set; }
-        bool annullable { get; set; }
 
         public DateTime Timestamp
         {
@@ -37,16 +31,6 @@ namespace FileSharing
                 time_left = value;
                 label_time = value.ToString();
                 this.NotifyPropertyChanged("Time_left");
-            }
-        }
-
-        public bool Annullable
-        {
-            get { return annullable; }
-            set
-            {
-                annullable = value;
-                this.NotifyPropertyChanged("Annullable");
             }
         }
 

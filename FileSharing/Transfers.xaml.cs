@@ -23,12 +23,13 @@ namespace FileSharing
     {
         //LISTA DEI POSSIBILI MESSAGGI OTTENIBILI
         private readonly string WAIT_RECEIVER_MSG = "In attesa che il destinatario accetti il trasferimento...";
-        private readonly string TRANSF_CANCELED_MSG = "Hai annullato il trasferimento.";
+        private readonly string TRANSF_CANCELED_QST = "Vuoi davvero cancellare il trasferimento con gli utenti selezionati?";
+        private readonly string TRANSF_CANCELED_MSG = "Trasferimento annullato dal mittente";
         private readonly string TRANSFER_NOT_ACCEPTED_MSG = "Trasferimento non accettato dal destinatario";
-        private readonly string NETWORK_ERROR_MSG= "Errore di rete durante il trasferimento";
-        private readonly string SUCCESS_MSG= "Trasferimento concluso con successo";
+        private readonly string NETWORK_ERROR_MSG = "Errore di rete durante il trasferimento";
+        private readonly string SUCCESS_MSG = "Trasferimento concluso con successo";
         private readonly string CLOSE_QUESTION_MSG = "Ci sono trasferimenti in corso. Annullarli ed uscire?";
-        private readonly string DIRECTORY_PROCESSING = "Preparazione contenuto in corso - Potrebbe richiedere diversi minuti";
+        private readonly string DIRECTORY_PROCESSING = "Preparazione contenuto in corso...\nAttendere per favore.";
         private bool isZipping = false;
 
         ObservableCollection<User> users = new ObservableCollection<User>();
@@ -37,12 +38,13 @@ namespace FileSharing
         private List<BackgroundWorker> bgws = new List<BackgroundWorker>();
         private string title;
 
-        public string Filename {
+        public string Filename
+        {
 
             get { return (String)GetValue(Transfers.TitleProperty); }
             set
             {
-               
+
                 this.title = value;
                 SetValue(Transfers.TitleProperty, value);
             }
@@ -56,11 +58,14 @@ namespace FileSharing
             this.button_ok.IsEnabled = false;
         }
 
-        public Transfers(ObservableCollection<User> list, FileToShare file) {
+        public Transfers(ObservableCollection<User> list, FileToShare file)
+        {
 
             foreach (User u in list)
+            {
                 users.Add(u);
 
+            }
 
             InitializeComponent();
             Filename = file.Filename;
@@ -114,24 +119,28 @@ namespace FileSharing
 
 
             isZipping = false;
+            //cancelButton.IsEnabled = true;
+
             this.file = new FileToShare(file.Path, file.Filename, file.IsDir);
             transfer(bgws);
 
+
         }
 
-     
-        private void transfer(List<BackgroundWorker> bgws) {
+
+        private void transfer(List<BackgroundWorker> bgws)
+        {
 
             try
-            { 
+            {
 
                 System.Console.WriteLine("path:" + file.Path + " filename:" + file.Filename + " isDir:" + file.IsDir.ToString());
 
                 foreach (User user in userSelectedList.Items)
                 {
-             
+
                     user.Progress = 0;
-                    user.Annullable = false;
+
                     System.Console.WriteLine("user:" + user.Name);
                     System.Console.WriteLine("user progress:" + user.Progress);
 
@@ -144,12 +153,13 @@ namespace FileSharing
                     worker.RunWorkerCompleted += worker_RunWorkerCompleted;
 
                     bgws.Add(worker);
-                    System.Console.WriteLine("list bg worker"+bgws.Count);
+                    System.Console.WriteLine("list bg worker" + bgws.Count);
 
 
-                    worker.RunWorkerAsync(user);   
+                    worker.RunWorkerAsync(user);
                 }
 
+          
             }
             catch (Exception e)
             {
@@ -166,7 +176,7 @@ namespace FileSharing
 
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
-            string responseString=null;
+            string responseString = null;
             double percentage = 0;
 
             try
@@ -197,8 +207,7 @@ namespace FileSharing
 
                     percentage = 0;
                     user.Label_time = WAIT_RECEIVER_MSG;
-                    //user.TransferStatus = "#FFB80202";
-                    user.Annullable = false;
+
                     (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
 
                 }
@@ -221,6 +230,11 @@ namespace FileSharing
 
                 if (responseString.StartsWith("ok"))
                 {
+                    var dispatcher = this.Dispatcher;
+
+
+                    dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { cancelButton.IsEnabled = true; }));              
+                    
                     long bufferSize = 65536;
                     if (fs.Length < bufferSize)
                         bufferSize = fs.Length;
@@ -238,7 +252,7 @@ namespace FileSharing
 
                         percentage = (double)(((i + 1) * bufferSize)) / fs.Length;
                         tcpClient.Client.Send(buffer, (int)size, SocketFlags.Partial);
-                        user.Annullable = true;
+
                         System.Console.WriteLine(percentage);
                         TimeSpan elapsedTime = DateTime.Now - started;
                         TimeSpan estimatedTime =
@@ -254,27 +268,17 @@ namespace FileSharing
                         if ((sender as BackgroundWorker).CancellationPending == true)
                         {
 
-                            string msg = TRANSF_CANCELED_MSG;
-                            MessageBoxResult result =
-                              MessageBox.Show(
-                                msg,
-                                "Attenzione",
-                                MessageBoxButton.OK,
-                                MessageBoxImage.Exclamation);
+                            // If user doesn't want to close, cancel closure
+                            fs.Dispose();
+                            tcpClient.Close();
+                            e.Cancel = true;
+                            percentage = 0;
+                            user.Label_time = TRANSF_CANCELED_MSG;
+                            user.TransferStatus = "#FFB80202";
 
-                            if (result == MessageBoxResult.OK)
-                            {
-                                // If user doesn't want to close, cancel closure
-                                fs.Dispose();
-                                tcpClient.Close();
-                                e.Cancel = true;
-                                percentage = 0;
-                                user.Label_time = TRANSF_CANCELED_MSG;
-                                user.TransferStatus = "#FFB80202";
-                                user.Annullable = false;
-                                (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
-                                return;
-                            }
+                            (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
+                            return;
+
                         }
                     }
 
@@ -283,7 +287,7 @@ namespace FileSharing
                     e.Result = user;
                     fs.Close();
                     tcpClient.Client.Close();
-                  
+
                 }
 
             }
@@ -293,7 +297,6 @@ namespace FileSharing
                 Console.WriteLine(ex.StackTrace);
                 percentage = 0;
                 user.TransferStatus = "#FFB80202";
-                user.Annullable = false;
 
                 if (ex is SocketException)
                     user.Label_time = NETWORK_ERROR_MSG;
@@ -325,31 +328,34 @@ namespace FileSharing
 
             BackgroundWorker bgw = (BackgroundWorker)sender;
 
-            if (e.Error != null || e.Cancelled)
+            if (e.Error != null || e.Cancelled==true)
             {   //don't do nothing more  
             }
             else
             {
                 User user = e.Result as User;
-                user.Annullable = false;
                 user.Label_time = SUCCESS_MSG;
             }
 
             bgws.Remove(bgw);
             if (bgws.Count == 0)
             {
+                this.cancelButton.IsEnabled = false;
                 this.button_ok.IsEnabled = true;
 
                 if (this.file.IsDir && File.Exists(file.Path))
-                    File.Delete(file.Path);
+                    try
+                    {
+                        File.Delete(file.Path);
+                    }
+                    catch (Exception ex) {
+
+
+
+                    }
             }
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            worker.CancelAsync();
-
-        }
 
         private void button_ok_Click(object sender, RoutedEventArgs e)
         {
@@ -385,6 +391,26 @@ namespace FileSharing
                     System.Windows.Application.Current.Shutdown();
                 }
             }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            string msg = TRANSF_CANCELED_QST;
+            MessageBoxResult result =
+              MessageBox.Show(
+                msg,
+                "Scegli cosa fare:",
+                MessageBoxButton.OKCancel,
+                MessageBoxImage.Stop);
+
+            if (result == MessageBoxResult.OK)
+            {
+                foreach (BackgroundWorker bgw in bgws)
+                    bgw.CancelAsync();
+
+                cancelButton.IsEnabled = false;
+            }
+         
         }
     }
 }
