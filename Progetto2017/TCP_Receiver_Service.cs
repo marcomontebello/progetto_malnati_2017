@@ -298,8 +298,6 @@ namespace Progetto2017
             App.Current.Dispatcher.InvokeAsync(() =>
             {
                 Window3 okWindow = new Window3();
-                if ((isDir) && (File.Exists(System.IO.Path.GetTempPath() + filename)))
-                    File.Delete(System.IO.Path.GetTempPath() + filename);
                 if (isDir)
                     filename = filename.Substring(0, filename.Length - 4);
                 okWindow.textBlock.Text = "Ricevuto " + filename + " da " + userSender + "!";
@@ -308,7 +306,8 @@ namespace Progetto2017
                 Thread.Sleep(5000);
                 okWindow.Close();
             });
-
+            if (isDir)
+                File.Delete(System.IO.Path.GetTempPath() + filename);
 
             socket.Shutdown(SocketShutdown.Both);
             socket.Close();
