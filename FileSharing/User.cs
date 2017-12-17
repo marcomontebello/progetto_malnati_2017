@@ -82,6 +82,7 @@ namespace FileSharing
             }
 
         }
+
         public int Progress {
 
             get { return progress; }
@@ -120,6 +121,7 @@ namespace FileSharing
                  this.NotifyPropertyChanged("Name");
                   }
         }
+
         public Bitmap Image
         {
             get { return img; }

@@ -75,7 +75,7 @@
     </Window.Resources>
 
     <DockPanel  LastChildFill="True">
-        <Label x:Name="label1" Content="" Height="37" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="445" Margin="0,0,123,0"/>
+        <Label x:Name="label_directory" Content="" Height="37" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="445" Margin="0,0,123,0"/>
 
         <ListView  Name="userSelectedList"  Margin="0,25,0,10" Width="595">
             <ListView.View>

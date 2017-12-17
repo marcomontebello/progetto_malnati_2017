@@ -1,12 +1,9 @@
 ﻿using System;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -104,7 +101,7 @@ namespace FileSharing
                         //Console.WriteLine(act_user.Address);
 
                         //GESTIONE CONNESSIONE NUOVO UTENTE
-                        if (!onlineUsers.Contains(act_user) /*&& !act_user.Address.Equals(GetLocalIPAddress())*/)
+                        if (!onlineUsers.Contains(act_user) && !act_user.Address.Equals(GetLocalIPAddress()))
                         {
          
                                 onlineUsers.Add(act_user);
@@ -231,7 +228,6 @@ namespace FileSharing
             {
 
                 string filePath = args[1];
-                //string filePath = "C:\\Users\\Marco Montebello\\Desktop\\provaaaaaa_1";
                 FileAttributes attr = File.GetAttributes(filePath);
                 bool is_dir = false;
 
@@ -268,6 +264,7 @@ namespace FileSharing
                     return ip.ToString();
                 }
             }
+
             throw new Exception("No network adapters with an IPv4 address in the system!");
         }
     }

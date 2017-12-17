@@ -28,7 +28,7 @@ namespace FileSharing
         private readonly string NETWORK_ERROR_MSG= "Errore di rete durante il trasferimento";
         private readonly string SUCCESS_MSG= "Trasferimento concluso con successo";
         private readonly string CLOSE_QUESTION_MSG = "Ci sono trasferimenti in corso. Annullarli ed uscire?";
-        private readonly string DIRECTORY_PROCESSING = "Preparazione contenuto da trasmettere...";
+        private readonly string DIRECTORY_PROCESSING = "Preparazione contenuto in corso - Potrebbe richiedere diversi minuti";
         private bool isZipping = false;
 
         ObservableCollection<User> users = new ObservableCollection<User>();
@@ -76,7 +76,7 @@ namespace FileSharing
                     await Task.Delay(200);
                     if (file.IsDir)
                     {
-                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label1.Content = "Preparazione contenuto in corso - Potrebbe richiedere qualche minuto"; }));
+                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label_directory.Content = DIRECTORY_PROCESSING; }));
 
                         string temp_path = null;
 
@@ -100,7 +100,7 @@ namespace FileSharing
 
                         dInfo.SetAccessControl(dSecurity);
 
-                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label1.Content = " "; }));
+                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label_directory.Content = " "; }));
                     }
 
 
@@ -171,9 +171,6 @@ namespace FileSharing
 
             try
             {
-
-
-
                 byte[] buffer = null;
                 byte[] header = null;
 
@@ -277,12 +274,8 @@ namespace FileSharing
                                 user.Annullable = false;
                                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                                 return;
-
                             }
-
-
                         }
-
                     }
 
                     Console.WriteLine("File " + this.file.Path + " inviato a " + ipAddr);
@@ -290,13 +283,13 @@ namespace FileSharing
                     e.Result = user;
                     fs.Close();
                     tcpClient.Client.Close();
-                   
-
+                  
                 }
 
             }
             catch (Exception ex)
             {
+
                 Console.WriteLine(ex.StackTrace);
                 percentage = 0;
                 user.TransferStatus = "#FFB80202";
@@ -309,13 +302,10 @@ namespace FileSharing
                     if (responseString.StartsWith("no"))
                         user.Label_time = TRANSFER_NOT_ACCEPTED_MSG;
 
-
                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                 e.Result = user;
                 throw;
             }
-           
-
         }
 
 
@@ -352,7 +342,6 @@ namespace FileSharing
 
                 if (this.file.IsDir && File.Exists(file.Path))
                     File.Delete(file.Path);
-
             }
         }
 
@@ -390,14 +379,10 @@ namespace FileSharing
 
                 else
                 {
-        
-
                     foreach (BackgroundWorker bgw in bgws)
                         bgw.CancelAsync();
 
                     System.Windows.Application.Current.Shutdown();
-
-
                 }
             }
         }
