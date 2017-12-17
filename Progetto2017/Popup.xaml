@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Progetto2017"
         mc:Ignorable="d"
-        Title="Popup" ResizeMode="NoResize" Height="144.975" Width="235" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Myicon.ico" Opacity="1" OpacityMask="Black" Background="Transparent" AllowsTransparency="True" WindowStyle="None">
+        Title="Popup" ResizeMode="NoResize" Height="144.975" Width="235" WindowStartupLocation="Manual" Top="100" Left="0" ShowInTaskbar="False" SnapsToDevicePixels="True" Icon="Resources/Myicon.ico" Opacity="1" OpacityMask="Black" Background="Transparent" AllowsTransparency="True" WindowStyle="None">
 
 
     <Window.Resources>
@@ -53,7 +53,7 @@
                 <ColumnDefinition Width="0"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="button" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="28" Height="28" Margin="0,0,-32,18" BorderThickness="0" RenderTransformOrigin="0.5,0.5" Click="button_Click" Grid.Column="5" IsDefault="True" AutomationProperties.HelpText="Exit service" >
+            <Button x:Name="exit_button" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right" VerticalAlignment="Bottom" Width="28" Height="28" Margin="0,0,-32,18" BorderThickness="0" RenderTransformOrigin="0.5,0.5" Click="exit_button_Click" Grid.Column="5" IsDefault="True" AutomationProperties.HelpText="Exit service" >
                 <Button.RenderTransform>
                     <TransformGroup>
                         <ScaleTransform/>
@@ -69,12 +69,12 @@
                     <DropShadowEffect/>
                 </Button.Effect>
             </Button>
-            <Button x:Name="button1"  Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="button1_Click" Grid.Column="1" Background="#FF2B87D4" Content="Stato: &#xa;Online" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
+            <Button x:Name="status_button"  Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Left" VerticalAlignment="Bottom"  BorderThickness="0" Width="139" Margin="9,-3,0,17" Height="80" Click="status_button_Click" Grid.Column="1" Background="#FF2B87D4" RenderTransformOrigin="0,1" BorderBrush="{x:Null}" Foreground="#FF020101">
                 <Button.Effect>
                     <DropShadowEffect/>
                 </Button.Effect>
             </Button>
-            <Button x:Name="textBlock" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" BorderBrush="{x:Null}">
+            <Button x:Name="properties_button" Style="{DynamicResource ButtonStyle1}" HorizontalAlignment="Right"  VerticalAlignment="Bottom" Margin="0,0,-2,17" Width="35" Height="31" Grid.Column="1" FontFamily="{DynamicResource {x:Static SystemFonts.MenuFontFamilyKey}}" Grid.ColumnSpan="5" BorderBrush="{x:Null}">
                 <Button.Effect>
                     <DropShadowEffect/>
                 </Button.Effect>

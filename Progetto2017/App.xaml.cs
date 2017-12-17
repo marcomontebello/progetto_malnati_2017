@@ -1,26 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
 using System.ComponentModel;
-using System.Windows.Interop;
-using System.Windows.Threading;
-using System.Net.Sockets;
-using System.Net;
-using System.Text;
-using System.IO;
-using System.IO.Compression;
-using System.Threading;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
-using System.Runtime.InteropServices;
-using WPFNotification.Services;
-using WPFNotification.Model;
+
 
 namespace Progetto2017
 {
@@ -33,37 +14,32 @@ namespace Progetto2017
           private System.Windows.Forms.NotifyIcon _notifyIcon;
           private bool _isExit;
 
-
-
         protected override void OnStartup(StartupEventArgs e)
             {
+
             //creazione taskbar icon
-                base.OnStartup(e);
-            //nuovo codice
+            base.OnStartup(e);
             
             MainWindow =  new MainWindow();
-
-
             MainWindow.Closing += MainWindow_Closing;
-                Popup _popupWindow = new Popup();
 
+            Popup _popupWindow = new Popup();
             _notifyIcon = new System.Windows.Forms.NotifyIcon();
             _notifyIcon.Click += (s, args) => click_on_notifyIcon(_popupWindow);
             _notifyIcon.DoubleClick += (s, args) => ShowMainWindow();
             _notifyIcon.Icon = Progetto2017.Properties.Resources.MyIcon;
             _notifyIcon.Visible = true;
 
-
-
-            string menuCommand = string.Format("\"{0}\" \"%L\"", System.IO.Path.GetFullPath("..\\..\\..\\FileSharing\\bin\\Debug\\FileSharing.exe"));
+            string menuCommand = string.Format("\"{0}\" \"%L\"", 
+                System.IO.Path.GetFullPath("..\\..\\..\\FileSharing\\bin\\Debug\\FileSharing.exe"));
 
             //Creazione entry context menu per le cartelle
             FileShellExtension.Register("Folder","LANsharing","Condividi in LAN", menuCommand);
 
             //Creazione entry context menu per i file
             FileShellExtension.Register("*", "LANsharing", "Condividi in LAN", menuCommand);
-            _popupWindow.button.Click += (s, args) => ExitApplication(_popupWindow);
-            _popupWindow.textBlock.Click += (s, args) => ShowMainWindow();
+            _popupWindow.exit_button.Click += (s, args) => ExitApplication(_popupWindow);
+            _popupWindow.properties_button.Click += (s, args) => ShowMainWindow();
 
         }
 
@@ -71,23 +47,19 @@ namespace Progetto2017
         
         private void click_on_notifyIcon(Popup pw)
         {
-
-           
-            if (pw.IsVisible) {
-
+           if (pw.IsVisible) {
                 pw.Hide();
             }
-            else pw.Show();
-
+            else {
+                pw.Show();
+            }
         }
 
 
        private void ExitApplication(Popup pw)
-
             {
                 _isExit = true;
                 pw.Close();
-                //MainWindow.Close();
                 _notifyIcon.Dispose();
                 _notifyIcon = null;
                 
@@ -98,21 +70,17 @@ namespace Progetto2017
                 FileShellExtension.Unregister("*", "LANsharing");
                 App.Current.Shutdown();
                 Environment.Exit(0);
-
         }
 
         private void ShowMainWindow()
             {
-                if (MainWindow.IsVisible)
-                {
-                    if (MainWindow.WindowState == WindowState.Minimized)
-                    {
+                if (MainWindow.IsVisible) {
+                    if (MainWindow.WindowState == WindowState.Minimized) {
                         MainWindow.WindowState = WindowState.Normal;
                     }
-                    MainWindow.Activate();
+                MainWindow.Activate();
                 }
-                else
-                {
+                else {
                     MainWindow.Show();
                 }
             }
@@ -123,10 +91,7 @@ namespace Progetto2017
                 {
                     e.Cancel = true;
                     MainWindow.Hide(); // A hidden window can be shown again, a closed one not
-
                 }
             }
-
-       
     }
 }

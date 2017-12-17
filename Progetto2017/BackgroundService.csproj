@@ -52,8 +52,9 @@
   <PropertyGroup />
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>Myicon.ico</ApplicationIcon>
+    <ApplicationIcon>MyIcon.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup />
   <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -126,6 +127,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings1.settings</DependentUpon>
     </Compile>
+    <Compile Include="TCP_Receiver_Service.cs" />
+    <Compile Include="UDP_Sender_Service.cs" />
     <Compile Include="Window1.xaml.cs">
       <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
@@ -223,9 +226,6 @@
     <Resource Include="Resources\Myicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Myicon.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\icons8-Uscita-96.png" />
   </ItemGroup>
   <ItemGroup>
@@ -236,6 +236,7 @@
     <Resource Include="Resources\opened_folder1600.png" />
     <Resource Include="Resources\errorYT.png" />
     <Resource Include="Resources\likeFB.png" />
+    <Resource Include="MyIcon.ico" />
     <Content Include="Resources\user_profile_male.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

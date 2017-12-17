@@ -1,10 +1,8 @@
 // Sample application that demonstrates a simple shell context menu.
 // Ralph Arvesen (www.vertigo.com / www.lostsprings.com)
 
-using System;
 using System.Diagnostics;
 using Microsoft.Win32;
-using System.IO;
 
 namespace Progetto2017
 
