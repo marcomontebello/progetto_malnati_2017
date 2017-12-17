@@ -255,6 +255,8 @@ namespace Progetto2017
                     // provare con 
                     // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Substring(0, filename.Length - 4) + "\\\\";
+                    Console.WriteLine("Sto estraendo IN {0} ", dir);
+
                     ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
                     // filename = filename.Split('.').First();
 
