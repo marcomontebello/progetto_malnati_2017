@@ -40,10 +40,11 @@ namespace Progetto2017
             header = new byte[bufferSize];
             string isDirectory = "";
             bool isDir = false;
+            FileStream fs = null;
+
 
             try
             {
-
                 socket.ReceiveTimeout = 5000;
                 socket.Receive(header);
                 headerStr = Encoding.ASCII.GetString(header);
@@ -221,7 +222,6 @@ namespace Progetto2017
                 int bufferCount = Convert.ToInt32(Math.Ceiling((double)filesize / (double)bufferSize));
 
                 //controllo impostazioni di configurazione
-                FileStream fs;
                 if (!isDir)
                 {
 
@@ -239,7 +239,6 @@ namespace Progetto2017
                     int size = socket.Receive(buffer, SocketFlags.Partial);
                     if (size <= 0)
                     {
-                        fs.Close();
                         throw new Exception();
                     }
                     fs.Write(buffer, 0, size);
@@ -248,7 +247,6 @@ namespace Progetto2017
 
                 }
 
-                fs.Close();
 
                 if (isDir)
                 {
@@ -264,9 +262,14 @@ namespace Progetto2017
             }
             catch (Exception e)
             {
+                if (fs != null)
+                {
+                    fs.Dispose();
+                }
                 Console.WriteLine("ERRORE DURANTE IL TRASFERIMENTO: "+e.StackTrace);
                 if ((!isDir) && (File.Exists(selectedPathFile + filename)))
                 {
+
                     File.Delete(selectedPathFile + filename);
                 }
                 if ((isDir) && (File.Exists(System.IO.Path.GetTempPath() + filename)))
@@ -299,7 +302,7 @@ namespace Progetto2017
                 Thread.Sleep(5000);
                 okWindow.Close();
             });
-
+            fs.Dispose();
             if (isDir)
                 File.Delete(System.IO.Path.GetTempPath() + filename);
 
