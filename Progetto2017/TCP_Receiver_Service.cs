@@ -291,6 +291,8 @@ namespace Progetto2017
             App.Current.Dispatcher.InvokeAsync(() =>
             {
                 Window3 okWindow = new Window3();
+                if (isDir)
+                    filename = filename.Substring(0, filename.Length - 4);
                 okWindow.textBlock.Text = "Ricevuto " + filename + " da " + userSender + "!";
                 okWindow.Show();
                 SystemSounds.Hand.Play();
