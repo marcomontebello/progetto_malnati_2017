@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Security.AccessControl;
@@ -12,15 +11,8 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using System.Windows.Threading;
 
 namespace FileSharing
 {
@@ -29,12 +21,21 @@ namespace FileSharing
     /// </summary>
     public partial class Transfers : Window
     {
-        private ObservableCollection<User> users = new ObservableCollection<User>();
-        private string send_path;
-        private string filename;
-        private bool is_dir;
+        //LISTA DEI POSSIBILI MESSAGGI OTTENIBILI
+        private readonly string WAIT_RECEIVER_MSG = "In attesa che il destinatario accetti il trasferimento...";
+        private readonly string TRANSF_CANCELED_MSG = "Hai annullato il trasferimento.";
+        private readonly string TRANSFER_NOT_ACCEPTED_MSG = "Trasferimento non accettato dal destinatario";
+        private readonly string NETWORK_ERROR_MSG= "Errore di rete durante il trasferimento";
+        private readonly string SUCCESS_MSG= "Trasferimento concluso con successo";
+        private readonly string CLOSE_QUESTION_MSG = "Ci sono trasferimenti in corso. Annullarli ed uscire?";
+        private readonly string DIRECTORY_PROCESSING = "Preparazione contenuto da trasmettere...";
+        private bool isZipping = false;
+
+        ObservableCollection<User> users = new ObservableCollection<User>();
+        FileToShare file;
         BackgroundWorker worker;
-        List<BackgroundWorker> bgws = new List<BackgroundWorker>();
+        private List<BackgroundWorker> bgws = new List<BackgroundWorker>();
+        private string title;
 
         public string Filename {
 
@@ -42,7 +43,7 @@ namespace FileSharing
             set
             {
                
-                filename = value;
+                this.title = value;
                 SetValue(Transfers.TitleProperty, value);
             }
 
@@ -54,43 +55,78 @@ namespace FileSharing
             InitializeComponent();
             this.button_ok.IsEnabled = false;
         }
-        public Transfers(ObservableCollection<User> list,string path, string filename,bool is_dir) {
 
-
-            InitializeComponent();
+        public Transfers(ObservableCollection<User> list, FileToShare file) {
 
             foreach (User u in list)
                 users.Add(u);
-            this.userSelectedList.ItemsSource = users;
-
-            this.send_path = path;
-            Filename = filename;
-            this.is_dir = is_dir;
 
 
+            InitializeComponent();
+            Filename = file.Filename;
+            userSelectedList.ItemsSource = users;
+
+
+            this.Show();
+
+            var dispatcher = this.Dispatcher;
+            var loadingTask = Task.Run(
+                async () =>
+                {
+                    await Task.Delay(200);
+                    if (file.IsDir)
+                    {
+                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label1.Content = "Preparazione contenuto in corso - Potrebbe richiedere qualche minuto"; }));
+
+                        string temp_path = null;
+
+                        temp_path = System.IO.Path.GetTempPath() + file.Filename;
+
+
+                        if (!(File.Exists(temp_path)))
+                        {
+                            isZipping = true;
+                            ZipFile.CreateFromDirectory(file.Path, temp_path, CompressionLevel.NoCompression, false);
+                        }
+                        file.Path = temp_path;
+                        System.Console.WriteLine(file.Path);
+
+                        DirectoryInfo dInfo = new DirectoryInfo(file.Path);
+
+                        DirectorySecurity dSecurity = dInfo.GetAccessControl();
+                        dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl,
+                                                     InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
+                                                     PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+
+                        dInfo.SetAccessControl(dSecurity);
+
+                        dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { label1.Content = " "; }));
+                    }
+
+
+                    await Task.Delay(200);
+                });
+
+            while (!loadingTask.IsCompleted)
+            {
+                dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+            }
+
+
+            isZipping = false;
+            this.file = new FileToShare(file.Path, file.Filename, file.IsDir);
             transfer(bgws);
-
 
         }
 
      
         private void transfer(List<BackgroundWorker> bgws) {
 
-
-
             try
             { 
 
-                System.Console.WriteLine("path:" + send_path);
-                System.Console.WriteLine("filename:" + filename);
-                System.Console.WriteLine("isDir:" + is_dir.ToString());
+                System.Console.WriteLine("path:" + file.Path + " filename:" + file.Filename + " isDir:" + file.IsDir.ToString());
 
-                // senderTCP invio_file = new senderTCP(ip_graziano, send_path, filename);
-
-
-
-                // Task sendTask = Task.Factory.StartNew(invio_file.sendFile);
-                // sendTask.Wait();
                 foreach (User user in userSelectedList.Items)
                 {
              
@@ -111,9 +147,7 @@ namespace FileSharing
                     System.Console.WriteLine("list bg worker"+bgws.Count);
 
 
-                    worker.RunWorkerAsync(user);
-
-        
+                    worker.RunWorkerAsync(user);   
                 }
 
             }
@@ -133,47 +167,39 @@ namespace FileSharing
             string ipAddr = user.Address;
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
             string responseString=null;
+            double percentage = 0;
 
             try
             {
 
 
-                var timer = new System.Timers.Timer(1000D);
-                var snapshots = new Queue<long>(30);
 
                 byte[] buffer = null;
                 byte[] header = null;
 
-                FileStream fs = new FileStream(this.send_path, FileMode.Open, FileAccess.Read, FileShare.Read);
-
+                FileStream fs = new FileStream(this.file.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
                 System.Console.WriteLine("ip to which send:" + ipAddr);
-
                 TcpClient tcpClient = new TcpClient(ipAddr, 11000);
-                tcpClient.SendTimeout = 600000;
-                tcpClient.ReceiveTimeout = 600000;
+                tcpClient.SendTimeout = 60000;
+                tcpClient.ReceiveTimeout = 60000;
 
 
-                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.filename + "\r\nUser:" +Environment.UserName+"\r\nIsDir:"+this.is_dir.ToString()+"\r\n";
+                string headerStr = "Content-length:" + fs.Length.ToString() + "\r\nFilename:" + this.file.Filename + "\r\nUser:" + Environment.UserName + "\r\nIsDir:" + this.file.IsDir.ToString() + "\r\n";
                 Console.WriteLine(headerStr);
                 int HeaderbufferSize = Encoding.ASCII.GetBytes(headerStr).Length;
 
                 header = new byte[HeaderbufferSize];
                 Array.Copy(Encoding.ASCII.GetBytes(headerStr), header, Encoding.ASCII.GetBytes(headerStr).Length);
 
-                int filesize = Convert.ToInt32((double)fs.Length);
+                long filesize = fs.Length;
                 tcpClient.Client.Send(header);
-                double percentage = 0;
 
                 DateTime started = DateTime.Now;
 
-              
                 {
-                    // If user doesn't want to close, cancel closure
 
-                    // tcpClient.Close();
-                    //e.Cancel = false;
                     percentage = 0;
-                    user.Label_time = "In attesa che il destinatario accetti il trasferimento...";
+                    user.Label_time = WAIT_RECEIVER_MSG;
                     //user.TransferStatus = "#FFB80202";
                     user.Annullable = false;
                     (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
@@ -191,15 +217,16 @@ namespace FileSharing
 
                 if (responseString.StartsWith("no"))
                 {
-
+                    fs.Dispose();
+                    Thread.Sleep(100);
                     throw new Exception();
                 }
 
-                    if (responseString.StartsWith("ok"))
+                if (responseString.StartsWith("ok"))
                 {
-                    int bufferSize = 65536;
+                    long bufferSize = 65536;
                     if (fs.Length < bufferSize)
-                        bufferSize =(int) fs.Length;
+                        bufferSize = fs.Length;
 
                     int bufferCount = Convert.ToInt32(Math.Ceiling(((double)(fs.Length)) / ((double)(bufferSize))));
 
@@ -207,23 +234,22 @@ namespace FileSharing
                     {
 
                         buffer = new byte[bufferSize];
-                        int size = fs.Read(buffer, 0, bufferSize);
+                        long size = fs.Read(buffer, 0, (int)bufferSize);
 
                         if (i == (bufferCount - 1))
-                            percentage += ((double)filesize);
+                            percentage += filesize;
 
-                        percentage = (double)(((i + 1) * bufferSize)) / (double)fs.Length;
-                        tcpClient.Client.Send(buffer, size, SocketFlags.Partial);
+                        percentage = (double)(((i + 1) * bufferSize)) / fs.Length;
+                        tcpClient.Client.Send(buffer, (int)size, SocketFlags.Partial);
                         user.Annullable = true;
                         System.Console.WriteLine(percentage);
                         TimeSpan elapsedTime = DateTime.Now - started;
                         TimeSpan estimatedTime =
                                 TimeSpan.FromSeconds(
                                     (fs.Length - ((i + 1) * bufferSize)) /
-                                    ((double)((i + 1) * bufferSize) / elapsedTime.TotalSeconds));
-                        user.Label_time = Convert.ToInt32((estimatedTime.TotalSeconds)).ToString();
+                                    ((long)((i + 1) * bufferSize) / elapsedTime.TotalSeconds));
+                        user.Label_time = Convert.ToInt64((estimatedTime.TotalSeconds)).ToString();
 
-                       
                         (sender as BackgroundWorker).ReportProgress((int)(percentage * 100), user);
                         filesize -= size;
                         Thread.Sleep(10);
@@ -231,7 +257,7 @@ namespace FileSharing
                         if ((sender as BackgroundWorker).CancellationPending == true)
                         {
 
-                            string msg = "Hai annullato il trasferimento.";
+                            string msg = TRANSF_CANCELED_MSG;
                             MessageBoxResult result =
                               MessageBox.Show(
                                 msg,
@@ -242,10 +268,11 @@ namespace FileSharing
                             if (result == MessageBoxResult.OK)
                             {
                                 // If user doesn't want to close, cancel closure
+                                fs.Dispose();
                                 tcpClient.Close();
                                 e.Cancel = true;
                                 percentage = 0;
-                                user.Label_time = "Trasferimento annullato dal mittente";
+                                user.Label_time = TRANSF_CANCELED_MSG;
                                 user.TransferStatus = "#FFB80202";
                                 user.Annullable = false;
                                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
@@ -258,51 +285,36 @@ namespace FileSharing
 
                     }
 
-                    ////////////////////////////
-                    e.Result = user;
-                    ///////////////////////////////////////////////////////////
-                    Console.WriteLine("File " + send_path + " inviato a " + ipAddr);
+                    Console.WriteLine("File " + this.file.Path + " inviato a " + ipAddr);
 
+                    e.Result = user;
                     fs.Close();
                     tcpClient.Client.Close();
-
-                    FileAttributes attr = File.GetAttributes(send_path);
-
-
-                    if (is_dir == true)
-                    {
-                        if (Directory.Exists(send_path)) { 
-                            File.Delete(send_path);
-                            Console.WriteLine("File " + send_path + " cancellato.");
-                        }
-                    }
+                   
 
                 }
-
 
             }
             catch (Exception ex)
             {
-
-                double percentage = 0;
+                Console.WriteLine(ex.StackTrace);
+                percentage = 0;
                 user.TransferStatus = "#FFB80202";
                 user.Annullable = false;
 
-                if (responseString.StartsWith("no"))
-                {
+                if (ex is SocketException)
+                    user.Label_time = NETWORK_ERROR_MSG;
 
-                    Console.WriteLine("GRAZIANO NON HA ACCETTATO CAZZO");
-                    // If user doesn't want to close, cancel closure
-                    user.Label_time = "Trasferimento non accettato dal destinatario";
-                }
+                else if (responseString != null)
+                    if (responseString.StartsWith("no"))
+                        user.Label_time = TRANSFER_NOT_ACCEPTED_MSG;
 
-                else
-                  user.Label_time = "Errore di rete durante il trasferimento";
-              
+
                 (sender as BackgroundWorker).ReportProgress((int)(percentage), user);
                 e.Result = user;
                 throw;
             }
+           
 
         }
 
@@ -315,9 +327,6 @@ namespace FileSharing
                 user.Progress = 100;
             else
                 user.Progress = e.ProgressPercentage;
-            //user.Name = e.ProgressPercentage.ToString();
-            System.Console.WriteLine("user progress after:" + user.Progress);
-            System.Console.WriteLine("tiem left:" + user.Time_left);
 
         }
 
@@ -326,37 +335,25 @@ namespace FileSharing
 
             BackgroundWorker bgw = (BackgroundWorker)sender;
 
-            if (e.Error != null)
-            {
-                //User user = e.Result as User;
-                //user.Label_time = "Trasferimento probabilmente cancellato dal destinatario";
-
-
+            if (e.Error != null || e.Cancelled)
+            {   //don't do nothing more  
             }
-
-            else if (e.Cancelled)
-            {
-                //User user = e.Result as User;
-                //user.Label_time = "Trasferimento annullato";
-
-            }
-
             else
             {
                 User user = e.Result as User;
                 user.Annullable = false;
-                user.Label_time = "Trasferimento concluso con successo";
+                user.Label_time = SUCCESS_MSG;
             }
 
             bgws.Remove(bgw);
+            if (bgws.Count == 0)
+            {
+                this.button_ok.IsEnabled = true;
 
-            System.Console.WriteLine("list bg worker" + bgws.Count);
-            if (bgws.Count == 0) 
-            this.button_ok.IsEnabled = true;
-        
+                if (this.file.IsDir && File.Exists(file.Path))
+                    File.Delete(file.Path);
 
-
-
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -375,9 +372,9 @@ namespace FileSharing
         private void Window_Closing(object sender, CancelEventArgs e)
         {
 
-            if (bgws.Count > 0)
+            if (bgws.Count > 0 || isZipping)
             {
-                string msg = "Ci sono trasferimenti in corso. Annullarli ed uscire?";
+                string msg = CLOSE_QUESTION_MSG;
                 MessageBoxResult result =
                   MessageBox.Show(
                     msg,
@@ -391,7 +388,9 @@ namespace FileSharing
                     e.Cancel = true;
                 }
 
-                else {
+                else
+                {
+        
 
                     foreach (BackgroundWorker bgw in bgws)
                         bgw.CancelAsync();
@@ -400,9 +399,7 @@ namespace FileSharing
 
 
                 }
-
             }
-
         }
     }
 }

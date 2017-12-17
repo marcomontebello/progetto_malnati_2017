@@ -71,7 +71,11 @@ namespace FileSharing
                 int number1;
                 bool canConvert = int.TryParse(value, out number1);
                 if (canConvert)
-                    label_time = "Tempo rimanente stimato: " + value + "sec.";
+                {   if (Convert.ToInt32(value) < 60)
+                        label_time = "Tempo rimanente stimato: " + value + " sec.";
+                    else
+                        label_time = "Tempo rimanente stimato: " + Convert.ToInt32(value) / 60 + " min.";
+                }
                 else
                     label_time = value;
                 this.NotifyPropertyChanged("Label_time");

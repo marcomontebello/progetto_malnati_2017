@@ -1,30 +1,22 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.AccessControl;
 using System.Security.Principal;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-
-using System.Drawing;
 using System.Collections.ObjectModel;
+using System.Threading;
+using System.Timers;
 
 namespace FileSharing
 {
@@ -41,55 +33,58 @@ namespace FileSharing
 
         string[] args = Environment.GetCommandLineArgs(); 
         private readonly Dispatcher _uiDispatcher;
-       // private int id = 0;
-        string temp_path = null;
+        private readonly int REFRESH_TIMEOUT = 12;
+        private readonly String NO_USERS_MSG = "Nessun utente connesso, attendere...";
+        private readonly String MANY_USERS_MSG = "Seleziona uno o più utenti con cui condividere:";
+        private readonly String SELECT_WARNING = "Seleziona almeno un utente.";
 
-        //diventerà lista quando gestiremo utenti multipli
+
+
         //lista di indirizzi ip identificativi degli utenti
         private ObservableCollection<User> onlineUsers=new ObservableCollection<User>();
         private ObservableCollection<User> selectedUsers = new ObservableCollection<User>();
-
         private bool listen=true;
 
         public MainWindow()
         {
+
             InitializeComponent();
-           
             this.Title = "Condividi " + args[1].Substring(args[1].LastIndexOf('\\')+1)+ " con:";
             userOnlineList.ItemsSource = onlineUsers;
             _uiDispatcher = Dispatcher.CurrentDispatcher;
             Task.Factory.StartNew(UDP_listening_PI1);
 
+            System.Timers.Timer updateUITimer = new System.Timers.Timer();
+            updateUITimer.Elapsed += new ElapsedEventHandler(update_list);
+            updateUITimer.Enabled = true;
+
         }
-    
+
 
         public void UDP_listening_PI1()
         {
             UdpClient listener = new UdpClient(8889);
-            //var timeToWait = TimeSpan.FromSeconds(10);
-            //
-          listener.Client.ReceiveTimeout = 10000;
-
+ 
+            listener.Client.ReceiveTimeout = 10000;
             while (listen)
             {
                 if (onlineUsers.Count == 0)
                     _uiDispatcher.Invoke(new Action(() =>
                     {
-                        label.Content = "Nessun utente connesso in LAN, attendere.";
+                        label.Content = NO_USERS_MSG;
                         button_invia.IsEnabled = false;
 
                     }));
                 //System.Console.WriteLine(onlineUsers);
                 var ClientEp = new IPEndPoint(IPAddress.Any, 8889);
-
                 Message.Udp_message packet_content = null;
 
                 try
                 {
                     //ricezione pacchetto udp da endpoint
-                   // System.Console.WriteLine("in attesa di un pacchetto udp");
+                    // System.Console.WriteLine("in attesa di un pacchetto udp");
                     var ClientRequestData = listener.Receive(ref ClientEp);
-                   // System.Console.WriteLine(ClientRequestData.Length);
+
                     //deserializzazione del pacchetto ricevuto.
                     MemoryStream ms = new MemoryStream();
                     BinaryFormatter bf = new BinaryFormatter();
@@ -97,7 +92,7 @@ namespace FileSharing
                     ms.Seek(0, SeekOrigin.Begin);
                     packet_content = (Message.Udp_message)bf.Deserialize(ms);
                     //System.Console.WriteLine(packet_content.name+" "+packet_content.image.Size);
-                    // var ClientRequest = Encoding.ASCII.GetString(ClientRequestData);
+
                     _uiDispatcher.Invoke(new Action(() =>
                     {
 
@@ -106,124 +101,94 @@ namespace FileSharing
                         ib.ImageSource = Imaging.CreateBitmapSourceFromHBitmap(packet_content.image.GetHbitmap(), IntPtr.Zero, Int32Rect.Empty, BitmapSizeOptions.FromEmptyOptions());
 
                         User act_user = new FileSharing.User(ClientEp.Address.ToString(), packet_content.name, DateTime.Now,packet_content.image,ib);
-                        Console.WriteLine(act_user.Address);
+                        //Console.WriteLine(act_user.Address);
 
-                        if (!onlineUsers.Contains(act_user) && !act_user.Address.Equals(GetLocalIPAddress()))
+                        //GESTIONE CONNESSIONE NUOVO UTENTE
+                        if (!onlineUsers.Contains(act_user) /*&& !act_user.Address.Equals(GetLocalIPAddress())*/)
                         {
          
                                 onlineUsers.Add(act_user);
                                 button_invia.IsEnabled = true;
-                                label.Content = "Scegli con chi condividere:";
+                                label.Content = MANY_USERS_MSG;
+                                // System.Console.WriteLine("aggiunto utente alla lista");
 
-                            // System.Console.WriteLine("aggiunto elemento alla lista");
                         }
+                        //GESTIONE UTENTE GIA CONNESSO: CHECK DELLA LISTA PER UPDATE UI
                         else
                         {
                             foreach (User user in onlineUsers)
-                            {
-
-                                // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
-                                var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                                if (diffInSeconds > 10)
-                                {
-
-                                        _uiDispatcher.Invoke(new Action(() =>
-                                        {
-                                            onlineUsers.Remove(user);
-                                            if (onlineUsers.Count == 0)
-                                            {
-                                                label.Content = "Nessun utente connesso in LAN, attendere.";
-                                                button_invia.IsEnabled = false;
-                                            }
-
-                                        }));
-                                }
-
-                                else
-                                {
+ 
                                     if (user.Equals(act_user))
                                     {
                                         user.Timestamp = DateTime.Now;
                                         user.Image = packet_content.image;
-                                        //System.Console.WriteLine("trovato utente nella lista, non necessaria aggiunta");
+                                        //System.Console.WriteLine("trovato utente nella lista, aggiornato timestamp");
                                     }
                                 }
-                            }
-                        }
-                        //Do something here.
+
                     }));
                 }
-
-                catch (SocketException ex) {
-
-                    update_list();
-                    continue;
-
-                }
-
                 catch (Exception ex)
                 {
                     System.Console.WriteLine(ex.StackTrace);
-                    update_list();
+                    update_list(this,null);
                     continue;
 
                 }
-
-
             }
 
             listener.Close();
         }
 
-        private void update_list() {
+        private void update_list(object source, ElapsedEventArgs e) {
 
             try
             {
 
                 foreach (User user in new System.Collections.ArrayList(onlineUsers))
                 {
-                    // var found = onlineUsers.FirstOrDefault(c => c.Address == ClientEp.Address.ToString());
+
                     var diffInSeconds = (DateTime.Now - user.Timestamp).TotalSeconds;
-                    if (diffInSeconds >= 10)
+                    if (diffInSeconds >= REFRESH_TIMEOUT)
                     {
                             _uiDispatcher.Invoke(new Action(() =>
                             {
 
                                 onlineUsers.Remove(user);
+                                //System.Console.WriteLine("rimosso utente" + user.Name);
 
                                 if (onlineUsers.Count == 0)
-                                    label.Content = "Nessun utente connesso in LAN, attendere.";
+
+                                    label.Content = NO_USERS_MSG;
+
                                 button_invia.IsEnabled = false;
 
-
-                                /* Your code here */
                             }));
-                        //System.Console.WriteLine("rimosso utente" + user.Name);
                     }
                 }
             }
-            catch (Exception ex) { System.Console.WriteLine(ex.ToString()); }
+            catch (Exception ex) {
+
+                System.Console.WriteLine(ex.ToString());
+            
             }
+            Thread.Sleep(100);
+        }
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
-
-            listen = false;
+            //PASSA IN MODALITA TRANSFERTS E DISABILITA LISTENER
 
             foreach (User u in userOnlineList.SelectedItems)
+
                 selectedUsers.Add(u);
 
-            // selectedUsers = userOnlineList.SelectedItems as ObservableCollection<User>;
-            System.Console.WriteLine("###########################################################################################################################");
-
-            System.Console.WriteLine(selectedUsers.Count);
-            foreach (User u in selectedUsers)
-                System.Console.WriteLine(u.Address);
-
             if (selectedUsers.Count == 0) { 
-            string msg = "Seleziona almeno un utente";
-            MessageBoxResult result =
-              MessageBox.Show(
+
+                string msg = SELECT_WARNING;
+                MessageBoxResult result =
+               
+                MessageBox.Show(
                 msg,
                 "Attenzione",
                 MessageBoxButton.OK,
@@ -231,17 +196,20 @@ namespace FileSharing
 
                 if (result == MessageBoxResult.OK)
                 {
-                        return;
-                    // If user doesn't want to close, cancel closure
+
+                    listen = false;
+                    return;
+                        // If user doesn't want to close, cancel closure
                 }
 
              }
 
-           System.Console.WriteLine("###########################################################################################################################");
-            send_file();
+            this.Hide();
+
+            prepare_transfer();
+
             this.Close();
-            //transf_windows.userSelectedList.ItemsSource = selectedUsers;    
-            // UserControl uc = new UserControl();
+
 
         }
 
@@ -257,50 +225,28 @@ namespace FileSharing
 
         }
 
-        private void send_file()
+        private void prepare_transfer()
         {
             try
             {
 
-                string send_path = args[1];
-
-                //string send_path = "C:\\Users\\Marco Montebello\\Desktop\\PROVA";
-               // string send_path = "C:\\Users\\Marco Montebello\\Desktop\\ArchitectVideo_512kb.mp4";
-                //string send_path = "C:\\Users\\GRAZIANO\\Desktop\\ArchitectVideo_512kb.mp4";
-
-                FileAttributes attr = File.GetAttributes(send_path);
+                string filePath = args[1];
+                //string filePath = "C:\\Users\\Marco Montebello\\Desktop\\provaaaaaa_1";
+                FileAttributes attr = File.GetAttributes(filePath);
                 bool is_dir = false;
 
                 if (attr.HasFlag(FileAttributes.Directory))
-                {
-                 
+ 
                     is_dir = true;
-                    temp_path = System.IO.Path.GetTempPath()+ send_path.Split('\\').Last();
-                    if (!(File.Exists(temp_path)))
-                        //   ZipFile.CreateFromDirectory(send_path, "C:\\Users\\Marco Montebello\\Desktop\\PROVA.LAN_DIR");
-                        ZipFile.CreateFromDirectory(send_path,temp_path);
+                 
 
-                    //send_path = "C:\\Users\\Marco Montebello\\Desktop\\prova.LAN_DIR";
-                    send_path = temp_path;
-                    System.Console.WriteLine( send_path);
+                string filename = filePath.Split('\\').Last();
+                FileToShare fileToTransfer = new FileToShare(filePath, filename, is_dir);
 
-                    DirectoryInfo dInfo = new DirectoryInfo(send_path);
-
-                    DirectorySecurity dSecurity = dInfo.GetAccessControl();
-                    dSecurity.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl,
-                                                 InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit,
-                                                 PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
-                    dInfo.SetAccessControl(dSecurity);
-                    Console.WriteLine("Ho creato il file zip:" + send_path);
-
-
-                }
-
-                string filename = send_path.Split('\\').Last();
-
-                Transfers transf_windows = new Transfers(selectedUsers, send_path, filename, is_dir);
-                transf_windows.Show();
                 listen = false;
+
+                Transfers transfer_windows = new Transfers(selectedUsers, fileToTransfer);
+                transfer_windows.Show();
 
             }
 
