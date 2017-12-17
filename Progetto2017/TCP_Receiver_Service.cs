@@ -41,7 +41,7 @@ namespace Progetto2017
             string isDirectory = "";
             bool isDir = false;
             FileStream fs = null;
-
+            bool flagD = false;
 
             try
             {
@@ -247,6 +247,8 @@ namespace Progetto2017
 
                 }
 
+                fs.Dispose();
+                flagD = true;
 
                 if (isDir)
                 {
@@ -255,7 +257,7 @@ namespace Progetto2017
                     // provare con 
                     // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Substring(0, filename.Length - 4) + "\\\\";
-                    Console.WriteLine("Sto estraendo IN {0} ", dir);
+                    Console.WriteLine("Sto estraendo IN {0} ", selectedPathFile + dir);
 
                     ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
                     // filename = filename.Split('.').First();
@@ -264,7 +266,7 @@ namespace Progetto2017
             }
             catch (Exception e)
             {
-                if (fs != null)
+                if ((fs != null) && (flagD==false) )
                 {
                     fs.Dispose();
                 }
@@ -304,7 +306,6 @@ namespace Progetto2017
                 Thread.Sleep(5000);
                 okWindow.Close();
             });
-            fs.Dispose();
             if (isDir)
                 File.Delete(System.IO.Path.GetTempPath() + filename);
 
