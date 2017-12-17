@@ -131,7 +131,7 @@ namespace Progetto2017
                     filename = filename + ".zip";
 
                     Console.WriteLine("il nuovo file si chiama: {0}", filename);
-                    string nameDir = Path.GetFileNameWithoutExtension(filename);
+                    string nameDir = filename.Substring(0, filename.Length-4);
                     Console.WriteLine("Name Dir: {0}", nameDir);
 
                     string curZip = selectedPathFile + filename;
@@ -182,7 +182,7 @@ namespace Progetto2017
                     string fullPathFile = curFile.Replace(extFile, "");
                     Console.WriteLine("FullPathFIle no ext: {0}", fullPathFile);
 
-                    string nameF = Path.GetFileNameWithoutExtension(filename);
+                    string nameF = filename.Substring(0, filename.Length-extFile.Length);
                     Console.WriteLine("CurFile no ext: {0}", nameF);
 
                     Console.WriteLine(File.Exists(curFile) ? "File {0} exists." : "File {0} does not exist.", curFile);
