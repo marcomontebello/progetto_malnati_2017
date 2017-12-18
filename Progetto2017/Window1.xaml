@@ -47,7 +47,6 @@
                 <ColumnDefinition Width="45*"/>
                 <ColumnDefinition Width="23*"/>
             </Grid.ColumnDefinitions>
-            <Button x:Name="button" Content="Annulla" Margin="0,0,10,15" HorizontalAlignment="Right" Width="75" Height="26" VerticalAlignment="Bottom"/>
             <Button x:Name="button1" Content="OK" IsEnabled="False" Margin="0,0,25,15" RenderTransformOrigin="0.021,-0.132" Height="25" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Column="1"/>
             <TextBlock x:Name="textBlock" HorizontalAlignment="Left" TextWrapping="WrapWithOverflow" VerticalAlignment="Top" Margin="20,15,0,0" Width="340" Height="50" Grid.ColumnSpan="2"><Run/><LineBreak/><Run/></TextBlock>
 

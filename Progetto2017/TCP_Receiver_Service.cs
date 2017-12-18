@@ -42,7 +42,7 @@ namespace Progetto2017
             bool isDir = false;
             FileStream fs = null;
             bool flagD = false;
-            bool request_ACCEPTED = false;
+            bool request_ACCEPTED = true;
             try
             {
                 socket.ReceiveTimeout = 5000;
@@ -79,19 +79,16 @@ namespace Progetto2017
 
                 if (Settings1.Default.automaticAccept == false)
                 {
-                    if (!requestAccept(filename, filesize, userSender))
+                    if ((requestAccept(filename, filesize, userSender)) == false)
                     {
                         Console.WriteLine("trasferimento rifiutato");
+                        request_ACCEPTED = false;
                         byte[] msg = Encoding.ASCII.GetBytes("no\r\n");
 
                         socket.Send(msg);
                         socket.Shutdown(SocketShutdown.Both);
                         socket.Close();
                         return;
-                    }
-                    else
-                    {
-                        request_ACCEPTED = true;
                     }
 
                 }
@@ -101,22 +98,7 @@ namespace Progetto2017
                 if (Settings1.Default.useDefaultPath == false)
                 {
                     selectedPathFile = findPath(filename, filesize, userSender);
-                    if (selectedPathFile == null)
-                    {
-                        request_ACCEPTED = false;
-
-                        byte[] msg = Encoding.ASCII.GetBytes("no\r\n");
-
-                        socket.Send(msg);
-                        socket.Shutdown(SocketShutdown.Both);
-                        socket.Close();
-                        return;
-                    } else
-                    {
-                        request_ACCEPTED = true;
-                    }
                     Console.WriteLine("PERCORSO SELEZIONATO: {0}", selectedPathFile);
-
                 }
                 else
                 {
@@ -124,20 +106,18 @@ namespace Progetto2017
                     Console.WriteLine("PERCORSO DEFAULT: {0}", selectedPathFile);
                 }
 
-                Console.WriteLine("trasferimento accettato");
-                byte[] msg2 = Encoding.ASCII.GetBytes("ok\r\n");
-                socket.Send(msg2);
-
-
                 selectedPathFile = selectedPathFile.Replace("\\", "\\\\");
                 selectedPathFile = selectedPathFile + "\\\\";
                 Console.WriteLine("Percorso directory IMPOSTATO O SELEZIONATO: " + selectedPathFile);
 
+                Console.WriteLine("trasferimento accettato");
+                byte[] msg2 = Encoding.ASCII.GetBytes("ok\r\n");
+                socket.Send(msg2);
 
                 if (isDir)
                 {
                     Console.WriteLine("e' una directory");
-                    //filename = filename.Replace(".LAN_DIR", ".zip");
+
                     filename = filename + ".zip";
 
                     Console.WriteLine("il nuovo file si chiama: {0}", filename);
@@ -263,13 +243,10 @@ namespace Progetto2017
                 {
                     Console.WriteLine("Sto estraendo {0} ", selectedPathFile + filename);
 
-                    // provare con 
-                    // string dir = Path.GetFileNameWithoutExtension(filename) + "\\\\";
                     string dir = filename.Substring(0, filename.Length - 4) + "\\\\";
                     Console.WriteLine("Sto estraendo IN {0} ", selectedPathFile + dir);
 
                     ZipFile.ExtractToDirectory(System.IO.Path.GetTempPath() + filename, selectedPathFile + dir);
-                    // filename = filename.Split('.').First();
 
                 }
             }
@@ -287,10 +264,7 @@ namespace Progetto2017
                 }
                 if ((isDir) && (File.Exists(System.IO.Path.GetTempPath() + filename)))
                     File.Delete(System.IO.Path.GetTempPath() + filename);
-                // FAR COMPARIRE LA NOTIFICA DI ERRORE SE C'E' UN ERRORE E:
-                // ACCETT AUTOM E HO ACCETT
-                // IMMETTERE PERCORSO E HO GIA' INSERITO
-                // ENTRAMBI I DUE CASI PREC INSIEME
+                
                 if (request_ACCEPTED)
                 {
                     App.Current.Dispatcher.InvokeAsync(() =>
@@ -360,15 +334,13 @@ namespace Progetto2017
                 //CLICK OK
                 fileAcceptWindow.button1.Click += (s, args) =>
                 {
-                    //non invio nessun pacchetto finche non seleziono il path
                     flag = true;
                     fileAcceptWindow.Close();
                     oSignalEvent.Set();
                 };
-                //CLICK ANULLA
+                //CLICK NO
                 fileAcceptWindow.button.Click += (s, args) =>
                 {
-                    //non invio nessun pacchetto finche non seleziono il path
                     fileAcceptWindow.Close();
                     oSignalEvent.Set();
                 };
@@ -417,14 +389,6 @@ namespace Progetto2017
                 {
                     selectedPathFile = filePathWindow.textBox2.Text.ToString();
                     Console.WriteLine("PERCORSO selezionato: {0}", selectedPathFile);
-                    filePathWindow.Close();
-                    oSignalEvent.Set();
-                };
-
-                //cLICK ANNULLA
-                filePathWindow.button.Click += (s, args) =>
-                {
-                    Console.WriteLine("Hai cliccato annulla. Uscita");
                     filePathWindow.Close();
                     oSignalEvent.Set();
                 };
