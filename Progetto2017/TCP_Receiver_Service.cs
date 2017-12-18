@@ -42,7 +42,7 @@ namespace Progetto2017
             bool isDir = false;
             FileStream fs = null;
             bool flagD = false;
-
+            bool request_ACCEPTED = false;
             try
             {
                 socket.ReceiveTimeout = 5000;
@@ -89,6 +89,10 @@ namespace Progetto2017
                         socket.Close();
                         return;
                     }
+                    else
+                    {
+                        request_ACCEPTED = true;
+                    }
 
                 }
 
@@ -99,12 +103,17 @@ namespace Progetto2017
                     selectedPathFile = findPath(filename, filesize, userSender);
                     if (selectedPathFile == null)
                     {
+                        request_ACCEPTED = false;
+
                         byte[] msg = Encoding.ASCII.GetBytes("no\r\n");
 
                         socket.Send(msg);
                         socket.Shutdown(SocketShutdown.Both);
                         socket.Close();
                         return;
+                    } else
+                    {
+                        request_ACCEPTED = true;
                     }
                     Console.WriteLine("PERCORSO SELEZIONATO: {0}", selectedPathFile);
 
@@ -278,19 +287,25 @@ namespace Progetto2017
                 }
                 if ((isDir) && (File.Exists(System.IO.Path.GetTempPath() + filename)))
                     File.Delete(System.IO.Path.GetTempPath() + filename);
-
-                App.Current.Dispatcher.InvokeAsync(() =>
+                // FAR COMPARIRE LA NOTIFICA DI ERRORE SE C'E' UN ERRORE E:
+                // ACCETT AUTOM E HO ACCETT
+                // IMMETTERE PERCORSO E HO GIA' INSERITO
+                // ENTRAMBI I DUE CASI PREC INSIEME
+                if (request_ACCEPTED)
                 {
-                    Window4 errWindow = new Window4();
-                    if (isDir)
-                        filename = filename.Substring(0, filename.Length-4);
+                    App.Current.Dispatcher.InvokeAsync(() =>
+                    {
+                        Window4 errWindow = new Window4();
+                        if (isDir)
+                            filename = filename.Substring(0, filename.Length - 4);
 
-                    errWindow.textBlock.Text = "Errore trasferimento: " + filename + " da " + userSender + " non ricevuto!";
-                    errWindow.Show();
-                    SystemSounds.Hand.Play();
-                    Thread.Sleep(5000);
-                    errWindow.Close();
-                });
+                        errWindow.textBlock.Text = "Errore trasferimento: " + filename + " da " + userSender + " non ricevuto!";
+                        errWindow.Show();
+                        SystemSounds.Hand.Play();
+                        Thread.Sleep(5000);
+                        errWindow.Close();
+                    });
+                }
                 socket.Shutdown(SocketShutdown.Both);
                 socket.Close();
                 return;
