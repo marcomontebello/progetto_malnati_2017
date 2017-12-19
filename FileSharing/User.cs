@@ -25,10 +25,15 @@ namespace FileSharing
         bool annullable { get; set; }
 
 
+
         public int Code
         {
             get { return code; }
-            set { code = value; }
+            set { code = value;
+
+                this.NotifyPropertyChanged("Code");
+
+            }
         }
         public DateTime Timestamp
         {
