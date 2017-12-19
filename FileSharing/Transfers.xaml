@@ -45,10 +45,37 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <ImageBrush x:Key="ButtonImage" ImageSource="Resources/9308.png" Stretch="Uniform"/>
+        <Style TargetType="Button" x:Key="ButtonStyled">
+            <Setter Property="Background" Value="{StaticResource ButtonImage}"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                    Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" 
+                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" RecognizesAccessKey="True"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Foreground" Value="Blue" />
+                                <Setter Property="Cursor" Value="Hand" />
+                                <!-- If we don't tell the background to change on hover, it will remain the same -->
+                            </Trigger>
+
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5" />
+                            </Trigger>
+
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <DockPanel  LastChildFill="True">
-        <Label x:Name="label_directory" Content="" Height="52" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="315" Margin="0,0,243,0"/>
+        <Label x:Name="label_directory" Content="" Height="37" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Width="445" Margin="0,0,123,0"/>
 
         <ListView  Name="userSelectedList"  Margin="0,25,0,10" Width="595">
             <ListView.View>
@@ -77,18 +104,17 @@
                                             <RowDefinition Height="1*" />
                                             <RowDefinition Height="1*"/>
                                             <RowDefinition Height="1*" />
-
                                         </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="1*"></ColumnDefinition>
-                                            <ColumnDefinition Width="1*"></ColumnDefinition>
+
                                             <ColumnDefinition Width="1*"></ColumnDefinition>
 
 
                                         </Grid.ColumnDefinitions>
                                         <Label Grid.Row="0" Grid.Column="0" Content="{Binding Name}" Width="Auto" Height="Auto" HorizontalAlignment="Left" VerticalAlignment="Bottom" HorizontalContentAlignment="Center" FontFamily="Tahoma" FontWeight="Bold" />
                                         <Label Grid.Row="0" Grid.Column="1" Content="{Binding ProgressText}" Width="Auto" Height="Auto"  HorizontalAlignment="Right" FontWeight="Bold"/>
-                                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="8" Width="400" Minimum="0" Maximum="100"  Value="{Binding Progress}" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{Binding TransferStatus}" BorderBrush="{x:Null}"/>
+                                        <ProgressBar Grid.Row="1" Grid.ColumnSpan="2" Height="8" Width="350" Minimum="0" Maximum="100"  Value="{Binding Progress}" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{Binding TransferStatus}" BorderBrush="{x:Null}"/>
                                         <Label Grid.Row="2"   Grid.ColumnSpan="2" Content="{Binding Label_time}" Width="300" Height="40" HorizontalAlignment="Stretch" VerticalAlignment="Top" HorizontalContentAlignment="Center" />
 
                                     </Grid>
@@ -96,6 +122,16 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Width="80" Header="Stop Button">
+                        <GridViewColumn.CellTemplate >
+                            <DataTemplate>
+                                <Button  Tag="{Binding Code}" Style="{StaticResource ButtonStyled}"  Click="Button_Click" Width="25" Height="30" Margin="20,20,20,20" Foreground="{x:Null}" IsEnabled="{Binding Annullable}" BorderBrush="{x:Null}" >
+
+                                </Button>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+
                 </GridView>
 
             </ListView.View>
@@ -113,9 +149,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
-            <Button Name="button_ok" Click="button_ok_Click" Content="OK" Grid.Column="0" IsEnabled="False" Margin="3,34,28,-25" Grid.Row="1" />
-            <Button Name="cancelButton" Click="Button_Click" Content="Annulla" Grid.Column="0" IsEnabled="False" Margin="-102,34,133,-25" Grid.Row="1" />
-
+            <Button  Name="button_ok" Click="button_ok_Click" Content="OK" Grid.Column="0" IsEnabled="False" Margin="15,34,16,-25" Grid.Row="1" />
         </Grid>
         <Label x:Name="label" Content="Trasferimenti in corso:" VerticalAlignment="Top" FontFamily="Nirmala UI Semilight" FontSize="12" DockPanel.Dock="Top" Margin="-585,0,1,0"/>
 

@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
+using System.Net;
+using System.Windows;
+using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace FileSharing
 {
-    public class User :IEquatable<User> , INotifyPropertyChanged
+    public class User : IEquatable<User>, INotifyPropertyChanged
     {
         string ip { get; set; }
         string name { get; set; }
@@ -13,10 +18,18 @@ namespace FileSharing
         ImageBrush ib { get; set; }
         DateTime timestamp { get; set; }
         int progress { get; set; }
-        int time_left { get; set; } 
+        int code { get; set;   }
+        int time_left { get; set; }
         string label_time { get; set; }
         string transfer_status { get; set; }
+        bool annullable { get; set; }
 
+
+        public int Code
+        {
+            get { return code; }
+            set { code = value; }
+        }
         public DateTime Timestamp
         {
             get { return timestamp; }
@@ -34,6 +47,16 @@ namespace FileSharing
             }
         }
 
+        public bool Annullable
+        {
+            get { return annullable; }
+            set
+            {
+                annullable = value;
+                this.NotifyPropertyChanged("Annullable");
+            }
+        }
+
 
         public string TransferStatus
         {
@@ -41,7 +64,7 @@ namespace FileSharing
             set
             {
                 transfer_status = value;
-                
+
                 this.NotifyPropertyChanged("TransferStatus");
             }
         }
@@ -51,11 +74,12 @@ namespace FileSharing
             get { return label_time; }
             set
             {
- 
+
                 int number1;
                 bool canConvert = int.TryParse(value, out number1);
                 if (canConvert)
-                {   if (Convert.ToInt32(value) < 60)
+                {
+                    if (Convert.ToInt32(value) < 60)
                         label_time = "Tempo rimanente stimato: " + value + " sec.";
                     else
                         label_time = "Tempo rimanente stimato: " + Convert.ToInt32(value) / 60 + " min.";
@@ -67,10 +91,13 @@ namespace FileSharing
 
         }
 
-        public int Progress {
+        public int Progress
+        {
 
             get { return progress; }
-            set { progress = value;
+            set
+            {
+                progress = value;
                 this.NotifyPropertyChanged("Progress");
                 this.NotifyPropertyChanged("ProgressText");
             }
@@ -79,21 +106,24 @@ namespace FileSharing
         public string ProgressText
         {
 
-            get { return progress+"%"; }
+            get { return progress + "%"; }
 
         }
 
-        public ImageBrush Brush {
+        public ImageBrush Brush
+        {
 
             get { return ib; }
-            set { ib = value;  }
+            set { ib = value; }
 
         }
 
         public string Address
         {
             get { return ip; }
-            set { ip = value;
+            set
+            {
+                ip = value;
                 this.NotifyPropertyChanged("Address");
             }
         }
@@ -101,15 +131,19 @@ namespace FileSharing
         public string Name
         {
             get { return name; }
-            set { name = value;
-                 this.NotifyPropertyChanged("Name");
-                  }
+            set
+            {
+                name = value;
+                this.NotifyPropertyChanged("Name");
+            }
         }
 
         public Bitmap Image
         {
             get { return img; }
-            set { img = value;
+            set
+            {
+                img = value;
                 this.NotifyPropertyChanged("Image");
             }
         }
@@ -122,7 +156,7 @@ namespace FileSharing
                 this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
         }
 
-        public User(string address, string name, DateTime timestamp, Bitmap img,ImageBrush ib) 
+        public User(string address, string name, DateTime timestamp, Bitmap img, ImageBrush ib)
         {
 
             this.ip = address;
@@ -168,9 +202,9 @@ namespace FileSharing
 
         public override int GetHashCode()
         {
-            return   0x00010000;
+            return 0x00010000;
         }
-  
+
 
     }
 }
