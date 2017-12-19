@@ -101,7 +101,7 @@ namespace FileSharing
                         //Console.WriteLine(act_user.Address);
 
                         //GESTIONE CONNESSIONE NUOVO UTENTE
-                        if (!onlineUsers.Contains(act_user) /*&& !act_user.Address.Equals(GetLocalIPAddress())*/)
+                        if (!onlineUsers.Contains(act_user) && !act_user.Address.Equals(GetLocalIPAddress()))
                         {
          
                                 onlineUsers.Add(act_user);
