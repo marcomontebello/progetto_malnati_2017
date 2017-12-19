@@ -155,11 +155,12 @@ namespace FileSharing
                                 //System.Console.WriteLine("rimosso utente" + user.Name);
 
                                 if (onlineUsers.Count == 0)
+                                {
 
                                     label.Content = NO_USERS_MSG;
+                                    button_invia.IsEnabled = false;
 
-                                button_invia.IsEnabled = false;
-
+                                }
                             }));
                     }
                 }

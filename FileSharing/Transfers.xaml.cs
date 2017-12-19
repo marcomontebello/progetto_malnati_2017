@@ -32,6 +32,7 @@ namespace FileSharing
         private bool isZipping = false;
 
         ObservableCollection<User> users = new ObservableCollection<User>();
+        private List<User> userSupportList = new List<User>();
         FileToShare file;
         BackgroundWorker worker;
         private List<BackgroundWorker> bgws = new List<BackgroundWorker>();
@@ -61,8 +62,10 @@ namespace FileSharing
         {
 
             foreach (User u in list)
+            {
                 users.Add(u);
-
+                userSupportList.Add(u);
+            }
 
             InitializeComponent();
             Filename = file.Filename;
@@ -341,7 +344,15 @@ namespace FileSharing
                 user.Label_time = SUCCESS_MSG;
             }
 
+            int i = bgws.IndexOf(bgw);
             bgws.Remove(bgw);
+            userSupportList.RemoveAt(i);
+
+            foreach (User user_1 in users)
+                foreach(User user_2 in userSupportList)
+                    if(user_1.Equals(user_2))
+                        user_1.Code = userSupportList.IndexOf(user_2);
+
             if (bgws.Count == 0)
             {
                 this.button_ok.IsEnabled = true;
