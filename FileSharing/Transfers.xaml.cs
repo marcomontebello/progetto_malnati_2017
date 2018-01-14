@@ -177,13 +177,13 @@ namespace FileSharing
             IPHostEntry ipHost = Dns.GetHostEntry(Dns.GetHostName());
             string responseString = null;
             double percentage = 0;
+            FileStream fs = new FileStream(this.file.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             try
             {
                 byte[] buffer = null;
                 byte[] header = null;
 
-                FileStream fs = new FileStream(this.file.Path, FileMode.Open, FileAccess.Read, FileShare.Read);
                 System.Console.WriteLine("ip to which send:" + ipAddr);
                 TcpClient tcpClient = new TcpClient(ipAddr, 11000);
                 tcpClient.SendTimeout = 60000;
@@ -223,7 +223,9 @@ namespace FileSharing
 
                 if (responseString.StartsWith("no"))
                 {
-                    fs.Dispose();
+                    //fs.Dispose();
+
+
                     Thread.Sleep(100);
                     throw new Exception();
                 }
@@ -274,7 +276,8 @@ namespace FileSharing
                             if (result == MessageBoxResult.OK)
                             {
                                 // If user doesn't want to close, cancel closure
-                                fs.Dispose();
+                                //fs.Dispose();
+
                                 tcpClient.Close();
                                 e.Cancel = true;
                                 percentage = 0;
@@ -298,6 +301,8 @@ namespace FileSharing
             }
             catch (Exception ex)
             {
+                if(file.IsDir==true)
+                    fs.Dispose();
 
                 Console.WriteLine(ex.StackTrace);
                 percentage = 0;
@@ -358,7 +363,11 @@ namespace FileSharing
                 this.button_ok.IsEnabled = true;
 
                 if (this.file.IsDir && File.Exists(file.Path))
+                { 
+
                     File.Delete(file.Path);
+                    Console.WriteLine("dir cancellata da temp\n");
+                }
             }
         }
 

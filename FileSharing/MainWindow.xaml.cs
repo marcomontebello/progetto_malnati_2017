@@ -30,7 +30,7 @@ namespace FileSharing
 
         string[] args = Environment.GetCommandLineArgs(); 
         private readonly Dispatcher _uiDispatcher;
-        private readonly int REFRESH_TIMEOUT = 12;
+        private readonly int REFRESH_TIMEOUT = 15;
         private readonly String NO_USERS_MSG = "Nessun utente connesso, attendere...";
         private readonly String MANY_USERS_MSG = "Seleziona uno o più utenti con cui condividere:";
         private readonly String SELECT_WARNING = "Seleziona almeno un utente.";
@@ -81,6 +81,7 @@ namespace FileSharing
                     //ricezione pacchetto udp da endpoint
                     // System.Console.WriteLine("in attesa di un pacchetto udp");
                     var ClientRequestData = listener.Receive(ref ClientEp);
+                     System.Console.WriteLine("ricevuto un pacchetto udp");
 
                     //deserializzazione del pacchetto ricevuto.
                     MemoryStream ms = new MemoryStream();
@@ -122,7 +123,6 @@ namespace FileSharing
                                         //System.Console.WriteLine("trovato utente nella lista, aggiornato timestamp");
                                     }
                                 }
-
                     }));
                 }
                 catch (Exception ex)
