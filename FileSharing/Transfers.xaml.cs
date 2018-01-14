@@ -223,8 +223,8 @@ namespace FileSharing
 
                 if (responseString.StartsWith("no"))
                 {
-                    //fs.Dispose();
-
+                    if (fs != null)
+                        fs.Dispose();
 
                     Thread.Sleep(100);
                     throw new Exception();
@@ -276,7 +276,8 @@ namespace FileSharing
                             if (result == MessageBoxResult.OK)
                             {
                                 // If user doesn't want to close, cancel closure
-                                //fs.Dispose();
+                                if (fs!=null)
+                                    fs.Dispose();
 
                                 tcpClient.Close();
                                 e.Cancel = true;
@@ -301,7 +302,7 @@ namespace FileSharing
             }
             catch (Exception ex)
             {
-                if(file.IsDir==true)
+                if((file.IsDir==true) && (fs != null))
                     fs.Dispose();
 
                 Console.WriteLine(ex.StackTrace);
